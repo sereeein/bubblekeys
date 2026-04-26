@@ -5,6 +5,7 @@ pub mod key_listener;
 pub mod mute_controller;
 pub mod pack_format;
 pub mod pack_store;
+pub mod settings_store;
 
 use std::path::PathBuf;
 use std::sync::{Arc, RwLock};
