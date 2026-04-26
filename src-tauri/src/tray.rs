@@ -56,5 +56,13 @@ fn show_dropdown(app: &AppHandle) -> tauri::Result<()> {
         .skip_taskbar(true)
         .focused(true)
         .build()?;
+
+    let win = app.get_webview_window("tray").unwrap();
+    let win_for_blur = win.clone();
+    win.on_window_event(move |ev| {
+        if matches!(ev, tauri::WindowEvent::Focused(false)) {
+            let _ = win_for_blur.hide();
+        }
+    });
     Ok(())
 }

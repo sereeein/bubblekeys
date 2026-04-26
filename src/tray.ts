@@ -1,4 +1,4 @@
-import { getSettings, listPacks, setActivePack, setMuted, setVolume } from "./lib/ipc";
+import { getSettings, listPacks, setActivePack, setMuted, setVolume, showMain, quitApp } from "./lib/ipc";
 
 const root = document.getElementById("tray-root")!;
 async function paint() {
@@ -54,7 +54,10 @@ function bind() {
     setVolume(Number(vol.value)/100);
   });
   document.getElementById("t-open")!.addEventListener("click", () => {
-    // Main-window open hook will be wired via a Tauri command in a follow-up phase.
+    showMain();
+  });
+  document.getElementById("t-quit")!.addEventListener("click", () => {
+    quitApp();
   });
 }
 paint();

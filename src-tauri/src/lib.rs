@@ -43,6 +43,8 @@ pub fn run() {
             ipc::preview_pack,
             ipc::get_settings,
             ipc::update_settings,
+            ipc::show_main,
+            ipc::quit_app,
         ])
         .setup(|app| {
             let resource_dir = app.path().resource_dir().expect("resource_dir");
