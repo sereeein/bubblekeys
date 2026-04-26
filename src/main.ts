@@ -1,5 +1,6 @@
 import { renderHome } from "./views/home";
 import { renderPacks } from "./views/packs";
+import { renderSettings } from "./views/settings";
 import { createRouter } from "./lib/router";
 
 const tabs = document.getElementById("tabs")!;
@@ -10,6 +11,6 @@ const stub = (label: string) => async (h: HTMLElement) => { h.innerHTML = `<p st
 createRouter(screen, tabs, {
   home: renderHome,
   packs: renderPacks,
-  settings: stub("SETTINGS"),
+  settings: renderSettings,
   about: stub("ABOUT"),
 });
