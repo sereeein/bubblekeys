@@ -1,0 +1,10 @@
+@font-face {
+  font-family: "Ark Pixel 12px Monospaced";
+  src: url("/assets/fonts/ark-pixel-12px-monospaced.woff2") format("woff2");
+  font-display: swap;
+}
+@font-face {
+  font-family: "Ark Pixel 12px Proportional";
+  src: url("/assets/fonts/ark-pixel-12px-proportional.woff2") format("woff2");
+  font-display: swap;
+}

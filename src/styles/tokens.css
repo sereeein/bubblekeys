@@ -1,0 +1,24 @@
+:root {
+  --c-sky:        #b5c8f5;
+  --c-lavender:   #d4b5f5;
+  --c-pink:       #f5b5d4;
+  --c-mint:       #a3e6c5;
+  --c-ink:        #2d2d5f;
+  --c-subink:     #5d5d8f;
+  --c-shadow:     #8fb5f5;
+  --c-white:      #ffffff;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+
+  --font-pixel: "Ark Pixel 12px Monospaced", "Ark Pixel 12px Proportional",
+                "Boutique Bitmap 9x9", "Galmuri11", monospace;
+  --fz-body: 12px;
+  --fz-title: 18px;
+  --fz-hero: 24px;
+
+  --pixel-shadow-sm: 2px 2px 0 var(--c-ink);
+  --pixel-shadow-md: 4px 4px 0 var(--c-ink);
+}
