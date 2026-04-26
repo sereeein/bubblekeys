@@ -1,5 +1,6 @@
 pub mod audio_engine;
 pub mod key_listener;
+pub mod mute_controller;
 pub mod pack_format;
 pub mod pack_store;
 
