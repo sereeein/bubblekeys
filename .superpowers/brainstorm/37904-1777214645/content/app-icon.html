@@ -1,0 +1,503 @@
+<style>
+  body {
+    background: linear-gradient(180deg, #b5c8f5 0%, #d4b5f5 100%) !important;
+    font-family: 'Courier New', monospace !important;
+  }
+  .q-title {
+    font-size: 28px;
+    color: #2d2d5f;
+    text-align: center;
+    letter-spacing: 3px;
+    margin: 20px 0 4px;
+    font-weight: 900;
+    text-shadow: 3px 3px 0 #f5b5d4;
+  }
+  .q-sub {
+    font-size: 13px;
+    color: #5d5d8f;
+    text-align: center;
+    letter-spacing: 1px;
+    margin-bottom: 24px;
+  }
+
+  .icon-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+    max-width: 1200px;
+    margin: 0 auto 24px;
+    padding: 0 16px;
+  }
+  .icon-card {
+    background: #fff;
+    border: 4px solid #2d2d5f;
+    box-shadow: 6px 6px 0 #2d2d5f;
+    padding: 18px;
+    cursor: pointer;
+    transition: transform 0.1s;
+  }
+  .icon-card:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 #2d2d5f; }
+  .icon-card.selected { background: #a3e6c5; }
+  .opt-letter {
+    display: inline-block;
+    background: #2d2d5f;
+    color: #fff;
+    width: 28px; height: 28px;
+    line-height: 28px;
+    text-align: center;
+    font-weight: 900;
+  }
+  .opt-name {
+    margin: 8px 0 12px;
+    font-size: 15px;
+    color: #2d2d5f;
+    font-weight: 900;
+    letter-spacing: 1px;
+  }
+
+  /* === macOS Squircle base === */
+  .squircle {
+    border-radius: 22.5%;
+    image-rendering: pixelated;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(45,45,95,0.25), inset 0 -3px 0 rgba(0,0,0,0.1);
+  }
+
+  /* === Display sizes === */
+  .icon-large { width: 180px; height: 180px; margin: 0 auto 16px; }
+  .icon-sizes {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    align-items: center;
+    margin: 12px 0;
+    background: #f5f5fa;
+    padding: 10px;
+    border: 1px solid #2d2d5f;
+  }
+  .icon-mid { width: 64px; height: 64px; }
+  .icon-small { width: 32px; height: 32px; }
+  .icon-tiny { width: 16px; height: 16px; }
+  .size-label {
+    font-size: 9px;
+    color: #5d5d8f;
+    text-align: center;
+    margin-top: 4px;
+  }
+  .size-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* === ICON A: Pixel Bubble === */
+  .icon-a {
+    background: linear-gradient(135deg, #b5c8f5 0%, #d4b5f5 60%, #f5b5d4 100%);
+  }
+  .bubble {
+    position: absolute;
+    border-radius: 50%;
+    border: 6% solid #2d2d5f;
+    background: rgba(255,255,255,0.7);
+  }
+  .bubble.main {
+    width: 60%; height: 60%;
+    top: 22%; left: 22%;
+    border-width: 8%;
+    background: radial-gradient(circle at 30% 30%, #fff 0%, rgba(255,255,255,0.5) 50%, rgba(255,255,255,0.2) 100%);
+    box-shadow: inset 0 0 0 4% #d4b5f5;
+  }
+  .bubble.s1 {
+    width: 18%; height: 18%;
+    bottom: 18%; right: 18%;
+    border-width: 12%;
+    background: rgba(255,255,255,0.6);
+  }
+  .bubble.s2 {
+    width: 12%; height: 12%;
+    top: 18%; right: 14%;
+    border-width: 14%;
+  }
+  .bubble.shine {
+    width: 16%; height: 16%;
+    top: 28%; left: 28%;
+    background: #fff;
+    border: 0;
+  }
+
+  /* === ICON B: Pixel Game Boy === */
+  .icon-b {
+    background: linear-gradient(180deg, #d4b5f5 0%, #b5c8f5 100%);
+    padding: 14% 16%;
+    box-sizing: border-box;
+  }
+  .gb-body {
+    background: #f5b5d4;
+    width: 100%; height: 100%;
+    border: 4% solid #2d2d5f;
+    border-radius: 8% 8% 22% 22%;
+    padding: 10%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    box-shadow: inset -3% -3% 0 rgba(0,0,0,0.15);
+  }
+  .gb-mini-screen {
+    background: #c5e8d5;
+    border: 3% solid #2d2d5f;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #2d2d5f;
+    font-weight: 900;
+    font-size: 28%;
+    margin-bottom: 8%;
+  }
+  .gb-mini-controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    height: 25%;
+  }
+  .gb-mini-dpad {
+    width: 50%; aspect-ratio: 1; background: #2d2d5f;
+    margin: 0 auto;
+    clip-path: polygon(35% 0, 65% 0, 65% 35%, 100% 35%, 100% 65%, 65% 65%, 65% 100%, 35% 100%, 35% 65%, 0 65%, 0 35%, 35% 35%);
+  }
+  .gb-mini-buttons {
+    display: flex; gap: 6%;
+    justify-content: flex-end;
+  }
+  .gb-mini-btn {
+    width: 22%; aspect-ratio: 1;
+    background: #d4b5f5;
+    border: 18% solid #2d2d5f;
+    border-radius: 50%;
+    box-sizing: border-box;
+  }
+
+  /* === ICON C: Bubble + Key === */
+  .icon-c {
+    background: linear-gradient(180deg, #b5c8f5 0%, #f5b5d4 100%);
+    padding: 12%;
+    box-sizing: border-box;
+    position: relative;
+  }
+  .key-cap {
+    position: absolute;
+    bottom: 10%;
+    left: 18%;
+    width: 64%;
+    height: 38%;
+    background: linear-gradient(180deg, #fff 0%, #d4b5f5 100%);
+    border: 6% solid #2d2d5f;
+    border-radius: 8%;
+    box-shadow: inset 0 -8% 0 rgba(45,45,95,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #2d2d5f;
+    font-size: 200%;
+    font-weight: 900;
+  }
+  .icon-c .bubble.main {
+    width: 38%; height: 38%;
+    top: 10%; left: 32%;
+    border-width: 10%;
+    background: radial-gradient(circle at 30% 30%, #fff 0%, rgba(255,255,255,0.6) 60%);
+  }
+  .icon-c .bubble.s1 {
+    width: 14%; height: 14%;
+    top: 32%; left: 12%;
+    border-width: 14%;
+  }
+  .icon-c .bubble.s2 {
+    width: 10%; height: 10%;
+    top: 18%; right: 14%;
+    border-width: 18%;
+  }
+
+  /* Comparison list */
+  .pros-cons {
+    margin-top: 14px;
+    font-size: 11px;
+    line-height: 1.7;
+    color: #5d5d8f;
+  }
+  .pros-cons .pro { color: #2d8f5d; }
+  .pros-cons .con { color: #8f2d5d; }
+
+  .note {
+    background: #fff;
+    border: 3px solid #2d2d5f;
+    box-shadow: 4px 4px 0 #2d2d5f;
+    padding: 16px 20px;
+    max-width: 900px;
+    margin: 30px auto;
+    color: #2d2d5f;
+    font-size: 12px;
+    line-height: 1.7;
+  }
+  .note h4 {
+    margin: 0 0 8px;
+    font-size: 14px;
+    letter-spacing: 1px;
+  }
+  .badge {
+    display: inline-block;
+    background: #2d2d5f;
+    color: #fff;
+    padding: 1px 6px;
+    font-size: 10px;
+    margin: 0 4px;
+    letter-spacing: 1px;
+  }
+
+  /* Dock preview */
+  .dock-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    background: linear-gradient(180deg, rgba(255,255,255,0.4), rgba(255,255,255,0.1));
+    border: 1px solid rgba(255,255,255,0.4);
+    backdrop-filter: blur(10px);
+    padding: 8px 12px;
+    border-radius: 18px;
+    margin: 12px 0;
+    justify-content: center;
+  }
+  .dock-icon {
+    width: 50px; height: 50px;
+    border-radius: 22.5%;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  }
+  .dock-icon.bk { /* will inherit from selected */ }
+  .dock-fake { background: linear-gradient(135deg, #ff7a7a, #ff3d3d); }
+  .dock-fake.fb { background: linear-gradient(135deg, #4a90e2, #2070d0); }
+  .dock-fake.fc { background: linear-gradient(135deg, #ffb84d, #ff8a00); }
+  .dock-fake.fd { background: linear-gradient(135deg, #5dd8a8, #2da876); }
+</style>
+
+<div class="q-title">Q5 / App 图标设计</div>
+<div class="q-sub">★ macOS Squircle 圆角 · 1024px 基础 · 各尺寸适配 ★</div>
+
+<div class="icon-row">
+
+  <!-- Option A: Pixel Bubble -->
+  <div class="icon-card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="opt-letter">A</div>
+    <div class="opt-name">PIXEL BUBBLE</div>
+
+    <div class="squircle icon-large icon-a">
+      <div class="bubble main"></div>
+      <div class="bubble s1"></div>
+      <div class="bubble s2"></div>
+      <div class="bubble shine"></div>
+    </div>
+
+    <div class="icon-sizes">
+      <div class="size-stack">
+        <div class="squircle icon-mid icon-a">
+          <div class="bubble main"></div>
+          <div class="bubble s1"></div>
+          <div class="bubble s2"></div>
+          <div class="bubble shine"></div>
+        </div>
+        <div class="size-label">64px</div>
+      </div>
+      <div class="size-stack">
+        <div class="squircle icon-small icon-a">
+          <div class="bubble main"></div>
+          <div class="bubble shine"></div>
+        </div>
+        <div class="size-label">32px</div>
+      </div>
+      <div class="size-stack">
+        <div class="squircle icon-tiny icon-a">
+          <div class="bubble main"></div>
+        </div>
+        <div class="size-label">16px</div>
+      </div>
+    </div>
+
+    <div class="pros-cons">
+      <div class="pro">+ 16px 还能认出来（最重要）</div>
+      <div class="pro">+ 跟「BubbleKeys」名字直接呼应</div>
+      <div class="pro">+ 渐变 + 圆形 = 最像「真 Mac App」</div>
+      <div class="con">– 不直接传达「键盘」的功能</div>
+    </div>
+  </div>
+
+  <!-- Option B: Game Boy -->
+  <div class="icon-card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="opt-letter">B</div>
+    <div class="opt-name">PIXEL GAME BOY</div>
+
+    <div class="squircle icon-large icon-b">
+      <div class="gb-body">
+        <div class="gb-mini-screen">♪</div>
+        <div class="gb-mini-controls">
+          <div class="gb-mini-dpad"></div>
+          <div class="gb-mini-buttons">
+            <div class="gb-mini-btn"></div>
+            <div class="gb-mini-btn"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="icon-sizes">
+      <div class="size-stack">
+        <div class="squircle icon-mid icon-b">
+          <div class="gb-body">
+            <div class="gb-mini-screen">♪</div>
+            <div class="gb-mini-controls">
+              <div class="gb-mini-dpad"></div>
+              <div class="gb-mini-buttons"><div class="gb-mini-btn"></div><div class="gb-mini-btn"></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="size-label">64px</div>
+      </div>
+      <div class="size-stack">
+        <div class="squircle icon-small icon-b">
+          <div class="gb-body">
+            <div class="gb-mini-screen"></div>
+            <div class="gb-mini-controls">
+              <div class="gb-mini-dpad"></div>
+              <div class="gb-mini-buttons"><div class="gb-mini-btn"></div><div class="gb-mini-btn"></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="size-label">32px ⚠️</div>
+      </div>
+      <div class="size-stack">
+        <div class="squircle icon-tiny icon-b" style="padding:0;">
+          <div style="background:#f5b5d4; width:100%; height:100%; padding:20%; box-sizing:border-box">
+            <div style="background:#c5e8d5; width:100%; height:60%; border:1px solid #2d2d5f"></div>
+          </div>
+        </div>
+        <div class="size-label">16px ⚠️</div>
+      </div>
+    </div>
+
+    <div class="pros-cons">
+      <div class="pro">+ 跟主窗口形态完全一致，品牌强</div>
+      <div class="pro">+ 一眼就懂「这是个像素风工具」</div>
+      <div class="con">– 16/32 像素时细节挤成一团 ⚠️</div>
+      <div class="con">– 与功能（键盘音效）关联弱</div>
+    </div>
+  </div>
+
+  <!-- Option C: Bubble + Key -->
+  <div class="icon-card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="opt-letter">C</div>
+    <div class="opt-name">BUBBLE + KEY</div>
+
+    <div class="squircle icon-large icon-c">
+      <div class="bubble main"></div>
+      <div class="bubble s1"></div>
+      <div class="bubble s2"></div>
+      <div class="key-cap">B</div>
+    </div>
+
+    <div class="icon-sizes">
+      <div class="size-stack">
+        <div class="squircle icon-mid icon-c">
+          <div class="bubble main"></div>
+          <div class="bubble s1"></div>
+          <div class="key-cap">B</div>
+        </div>
+        <div class="size-label">64px</div>
+      </div>
+      <div class="size-stack">
+        <div class="squircle icon-small icon-c">
+          <div class="bubble main"></div>
+          <div class="key-cap">B</div>
+        </div>
+        <div class="size-label">32px</div>
+      </div>
+      <div class="size-stack">
+        <div class="squircle icon-tiny icon-c">
+          <div class="key-cap" style="bottom:8%;left:14%;width:72%;height:42%;font-size:0">B</div>
+        </div>
+        <div class="size-label">16px</div>
+      </div>
+    </div>
+
+    <div class="pros-cons">
+      <div class="pro">+ 同时表达「泡泡 + 键盘」两个核心元素</div>
+      <div class="pro">+ 功能传达最清晰</div>
+      <div class="con">– 16px 时元素打架 ⚠️</div>
+      <div class="con">– 比 A 少一点「精致玩具感」</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Dock previews -->
+<div class="note">
+  <h4>★ Dock 真实尺寸效果 ★</h4>
+  <div style="font-size:11px; color:#5d5d8f; margin-bottom:8px">放在真实 Dock 里看跟其他 App 并排的样子（A / B / C 各自最大尺寸）：</div>
+
+  <div style="font-size:10px; color:#5d5d8f; letter-spacing:1px">A · PIXEL BUBBLE</div>
+  <div class="dock-row">
+    <div class="dock-icon dock-fake"></div>
+    <div class="dock-icon dock-fake fb"></div>
+    <div class="dock-icon dock-fake fc"></div>
+    <div class="squircle" style="width:50px; height:50px; box-shadow:0 4px 8px rgba(0,0,0,0.2)">
+      <div style="position:absolute;inset:0;background:linear-gradient(135deg, #b5c8f5 0%, #d4b5f5 60%, #f5b5d4 100%)"></div>
+      <div class="bubble main"></div>
+      <div class="bubble shine"></div>
+    </div>
+    <div class="dock-icon dock-fake fd"></div>
+  </div>
+
+  <div style="font-size:10px; color:#5d5d8f; letter-spacing:1px">B · GAME BOY</div>
+  <div class="dock-row">
+    <div class="dock-icon dock-fake"></div>
+    <div class="dock-icon dock-fake fb"></div>
+    <div class="dock-icon dock-fake fc"></div>
+    <div class="squircle icon-b" style="width:50px; height:50px;">
+      <div class="gb-body">
+        <div class="gb-mini-screen">♪</div>
+        <div class="gb-mini-controls">
+          <div class="gb-mini-dpad"></div>
+          <div class="gb-mini-buttons"><div class="gb-mini-btn"></div><div class="gb-mini-btn"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="dock-icon dock-fake fd"></div>
+  </div>
+
+  <div style="font-size:10px; color:#5d5d8f; letter-spacing:1px">C · BUBBLE + KEY</div>
+  <div class="dock-row">
+    <div class="dock-icon dock-fake"></div>
+    <div class="dock-icon dock-fake fb"></div>
+    <div class="dock-icon dock-fake fc"></div>
+    <div class="squircle icon-c" style="width:50px; height:50px;">
+      <div class="bubble main"></div>
+      <div class="bubble s1"></div>
+      <div class="key-cap">B</div>
+    </div>
+    <div class="dock-icon dock-fake fd"></div>
+  </div>
+</div>
+
+<div class="note">
+  <h4>📐 工程交付清单（不管选哪个，都按这个出）</h4>
+  <div style="font-size:11px; line-height:1.8">
+    <span class="badge">1024×1024</span><span class="badge">512</span><span class="badge">256</span><span class="badge">128</span><span class="badge">64</span><span class="badge">32</span><span class="badge">16</span> · 全部带 @1x / @2x<br/>
+    打包成 <code>.icns</code>（Mac App 标准）+ Dock 用的 <code>.iconset</code> 源文件<br/>
+    Apple 官方 Squircle 圆角（22.5% radius）+ 80% 内容安全区<br/>
+    <b>同时输出</b>：网站/GitHub README 用的横版 logo + 浅色/深色背景两版本
+  </div>
+</div>
+
+<div style="text-align:center; margin: 30px 20px; color: #2d2d5f; font-size: 13px; max-width:800px; margin-left:auto; margin-right:auto; background: #fff; border: 3px solid #2d2d5f; padding: 16px; box-shadow: 4px 4px 0 #2d2d5f;">
+  💡 <b>我推荐 A · PIXEL BUBBLE</b><br/>
+  <span style="font-size:12px; color:#5d5d8f">理由：16px 还能识别（B/C 都会糊），跟 BubbleKeys 名字最贴，渐变看上去像「真 App」（而不是开发者周末项目）。<br/>
+  Game Boy 元素留给主窗口本身就够强了，图标不必重复。</span>
+</div>

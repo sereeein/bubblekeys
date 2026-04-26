@@ -1,0 +1,76 @@
+<style>
+  body { background: linear-gradient(180deg, #b5c8f5 0%, #d4b5f5 100%) !important; font-family: 'Courier New', monospace !important; }
+  .wrap { max-width: 800px; margin: 30px auto; padding: 0 20px; }
+  .frame {
+    background: #fff; border: 4px solid #2d2d5f;
+    box-shadow: 6px 6px 0 #2d2d5f; padding: 28px;
+  }
+  .ttl { font-size: 24px; color: #2d2d5f; letter-spacing: 2px; font-weight: 900; text-align: center; }
+  .sub { font-size: 12px; color: #5d5d8f; text-align: center; letter-spacing: 1px; margin-top: 4px; }
+  .phase-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+    margin-top: 22px;
+  }
+  .phase {
+    background: #b5c8f5; border: 2px solid #2d2d5f; padding: 8px 6px;
+    font-size: 10px; color: #2d2d5f;
+    text-align: center; line-height: 1.4;
+  }
+  .phase.tracer { background: #a3e6c5; font-weight: 900; }
+  .phase .num { font-weight: 900; color: #8f2d5d; display: block; font-size: 13px; }
+  .opts { margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .opt {
+    background: #f5d4e8; border: 3px solid #2d2d5f;
+    padding: 14px;
+  }
+  .opt.rec { background: #a3e6c5; }
+  .opt h3 { margin: 0 0 6px; font-size: 14px; color: #2d2d5f; letter-spacing: 1px; }
+  .opt p { margin: 0; font-size: 11px; color: #5d5d8f; line-height: 1.6; }
+  .badge {
+    display: inline-block; background: #2d2d5f; color: #fff;
+    font-size: 9px; padding: 1px 6px; margin-bottom: 6px; letter-spacing: 1px;
+  }
+</style>
+
+<div class="wrap">
+  <div class="frame">
+    <div class="ttl">📝 PLAN COMPLETE</div>
+    <div class="sub">docs/superpowers/plans/2026-04-26-bubblekeys.md</div>
+
+    <div class="phase-grid">
+      <div class="phase"><span class="num">0</span>Repo scaffold</div>
+      <div class="phase"><span class="num">1</span>Tauri hello-world</div>
+      <div class="phase tracer"><span class="num">2</span>🎯 First sound on key press</div>
+      <div class="phase"><span class="num">3</span>Pack abstraction + 4 packs</div>
+      <div class="phase"><span class="num">4</span>Game Boy HOME page</div>
+      <div class="phase"><span class="num">5</span>PACKS page + tabs</div>
+      <div class="phase"><span class="num">6</span>SETTINGS page</div>
+      <div class="phase"><span class="num">7</span>Menu-bar dropdown</div>
+      <div class="phase"><span class="num">8</span>First-run flow</div>
+      <div class="phase"><span class="num">9</span>i18n 5 languages</div>
+      <div class="phase"><span class="num">10</span>Mechvibes import</div>
+      <div class="phase"><span class="num">11</span>Night silent</div>
+      <div class="phase"><span class="num">12</span>ABOUT page</div>
+      <div class="phase"><span class="num">13</span>App icon + brand</div>
+      <div class="phase"><span class="num">14</span>CI/CD GH Actions</div>
+      <div class="phase"><span class="num">15</span>Homebrew Cask</div>
+    </div>
+
+    <div class="opts">
+      <div class="opt rec">
+        <span class="badge">RECOMMENDED</span>
+        <h3>① 子 Agent 驱动</h3>
+        <p>每个任务派一个全新的子 agent · 中间停下让你 review · 上下文最干净 · 适合长 plan</p>
+      </div>
+      <div class="opt">
+        <span class="badge">替代方案</span>
+        <h3>② 当前会话内联</h3>
+        <p>就在这个对话里按 plan 跑 · 设 checkpoint · 上下文长但没切换成本</p>
+      </div>
+    </div>
+
+    <div style="margin-top:18px; text-align:center; font-size:11px; color:#5d5d8f">
+      回终端选 1 还是 2，或者自己手动按 plan 跑
+    </div>
+  </div>
+</div>

@@ -1,0 +1,405 @@
+<style>
+  body {
+    background: linear-gradient(180deg, #b5c8f5 0%, #d4b5f5 100%) !important;
+    font-family: 'Courier New', monospace !important;
+  }
+  .q-title {
+    font-size: 28px;
+    color: #2d2d5f;
+    text-align: center;
+    letter-spacing: 3px;
+    margin: 20px 0 4px;
+    font-weight: 900;
+    text-shadow: 3px 3px 0 #f5b5d4;
+  }
+  .q-sub {
+    font-size: 13px;
+    color: #5d5d8f;
+    text-align: center;
+    letter-spacing: 1px;
+    margin-bottom: 24px;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+
+  .section {
+    background: #fff;
+    border: 4px solid #2d2d5f;
+    box-shadow: 6px 6px 0 #2d2d5f;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  .section-num {
+    display: inline-block;
+    background: #2d2d5f; color: #fff;
+    width: 32px; height: 32px;
+    text-align: center; line-height: 32px;
+    font-weight: 900;
+    margin-right: 10px;
+  }
+  .section h3 {
+    margin: 0 0 6px;
+    color: #2d2d5f;
+    font-size: 18px;
+    letter-spacing: 2px;
+    display: flex; align-items: center;
+  }
+  .section .sub {
+    font-size: 12px;
+    color: #5d5d8f;
+    letter-spacing: 1px;
+    margin-bottom: 18px;
+    margin-left: 42px;
+  }
+  .rec-tag {
+    display: inline-block;
+    background: #a3e6c5;
+    border: 2px solid #2d2d5f;
+    padding: 2px 8px;
+    font-size: 10px;
+    margin-left: 8px;
+    letter-spacing: 1px;
+  }
+
+  /* === Section 1: Font === */
+  .lang-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+  }
+  .lang-card {
+    background: #c5e8d5;
+    border: 3px solid #2d2d5f;
+    padding: 16px 10px;
+    text-align: center;
+  }
+  .lang-card .flag { font-size: 20px; margin-bottom: 4px; }
+  .lang-card .name { font-size: 10px; color: #5d5d8f; margin-bottom: 8px; letter-spacing: 1px; }
+  .lang-card .sample {
+    background: #fff;
+    border: 2px solid #2d2d5f;
+    padding: 8px 4px;
+    color: #2d2d5f;
+    font-weight: 700;
+  }
+  .lang-card .sample .title { font-size: 14px; margin-bottom: 4px; }
+  .lang-card .sample .item { font-size: 11px; color: #5d5d8f; }
+  .font-note {
+    background: #b5c8f5;
+    border: 2px solid #2d2d5f;
+    padding: 12px 16px;
+    margin-top: 16px;
+    font-size: 12px;
+    color: #2d2d5f;
+    line-height: 1.7;
+  }
+  .font-note b { color: #8f2d5d; }
+
+  /* === Section 2: First run === */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  .step {
+    background: #f5d4e8;
+    border: 3px solid #2d2d5f;
+    padding: 14px;
+  }
+  .step-num {
+    background: #2d2d5f; color: #fff;
+    width: 24px; height: 24px;
+    text-align: center; line-height: 24px;
+    font-weight: 900;
+    margin-bottom: 10px;
+    font-size: 12px;
+  }
+  .step h4 {
+    margin: 0 0 6px; font-size: 13px; color: #2d2d5f; letter-spacing: 1px;
+  }
+  .step p {
+    margin: 0; font-size: 11px; color: #5d5d8f; line-height: 1.5;
+  }
+  .step-screen {
+    background: #fff;
+    border: 2px solid #2d2d5f;
+    padding: 8px;
+    margin-top: 8px;
+    text-align: center;
+    font-size: 9px;
+    color: #2d2d5f;
+    min-height: 70px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .mini-btn {
+    display: inline-block;
+    background: #a3e6c5;
+    border: 1px solid #2d2d5f;
+    padding: 2px 6px;
+    margin-top: 4px;
+    font-size: 9px;
+  }
+
+  /* === Section 3: Distribution === */
+  .dist-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+  }
+  .dist-card {
+    background: #b5c8f5;
+    border: 3px solid #2d2d5f;
+    padding: 14px;
+  }
+  .dist-card.primary { background: #a3e6c5; }
+  .dist-card.skip { background: #f5f5fa; opacity: 0.7; }
+  .dist-card h4 {
+    margin: 0 0 6px;
+    font-size: 13px;
+    letter-spacing: 1px;
+    color: #2d2d5f;
+  }
+  .dist-card p {
+    margin: 0; font-size: 11px; color: #5d5d8f; line-height: 1.5;
+  }
+  .dist-card .verdict {
+    margin-top: 8px; font-size: 11px; font-weight: 900;
+  }
+  .dist-card.primary .verdict { color: #2d8f5d; }
+  .dist-card.skip .verdict { color: #8f2d5d; }
+
+  /* === Section 4: Default packs === */
+  .pack-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  .pack-card {
+    background: #d4b5f5;
+    border: 3px solid #2d2d5f;
+    padding: 14px;
+    text-align: center;
+  }
+  .pack-icon {
+    font-size: 32px; margin-bottom: 6px;
+  }
+  .pack-card h4 {
+    margin: 0 0 4px; font-size: 13px; color: #2d2d5f; letter-spacing: 1px;
+  }
+  .pack-card .desc {
+    font-size: 10px; color: #5d5d8f; line-height: 1.4;
+  }
+  .pack-card .src {
+    margin-top: 8px;
+    background: #fff;
+    border: 1px solid #2d2d5f;
+    padding: 3px 6px;
+    font-size: 9px;
+    color: #2d2d5f;
+  }
+
+  .summary-bar {
+    background: #2d2d5f; color: #fff;
+    padding: 18px 24px;
+    border: 4px solid #2d2d5f;
+    box-shadow: 6px 6px 0 #f5b5d4;
+    max-width: 800px;
+    margin: 30px auto;
+    text-align: center;
+    letter-spacing: 1px;
+  }
+  .summary-bar b { color: #a3e6c5; }
+</style>
+
+<div class="q-title">最后 4 个收尾决定</div>
+<div class="q-sub">★ 我已经填好了推荐方案 · 看一眼，不同意的指出来 ★</div>
+
+<div class="container">
+
+  <!-- 1. FONT STRATEGY -->
+  <div class="section">
+    <h3><span class="section-num">1</span> i18n 字体策略 <span class="rec-tag">★ Ark Pixel 方舟像素</span></h3>
+    <div class="sub">5 语言 UI 必须用<b>同一套像素字体</b>才不会出现「英文像素 + 中文宋体」的拼接感</div>
+
+    <div class="lang-grid">
+      <div class="lang-card">
+        <div class="flag">🇺🇸</div>
+        <div class="name">ENGLISH</div>
+        <div class="sample">
+          <div class="title">Cherry Blue</div>
+          <div class="item">Bubbles</div>
+          <div class="item">Settings</div>
+        </div>
+      </div>
+      <div class="lang-card">
+        <div class="flag">🇨🇳</div>
+        <div class="name">简中</div>
+        <div class="sample">
+          <div class="title">樱桃青轴</div>
+          <div class="item">泡泡</div>
+          <div class="item">设置</div>
+        </div>
+      </div>
+      <div class="lang-card">
+        <div class="flag">🇹🇼</div>
+        <div class="name">繁中</div>
+        <div class="sample">
+          <div class="title">櫻桃青軸</div>
+          <div class="item">氣泡</div>
+          <div class="item">設定</div>
+        </div>
+      </div>
+      <div class="lang-card">
+        <div class="flag">🇯🇵</div>
+        <div class="name">日本語</div>
+        <div class="sample">
+          <div class="title">チェリー青軸</div>
+          <div class="item">バブル</div>
+          <div class="item">設定</div>
+        </div>
+      </div>
+      <div class="lang-card">
+        <div class="flag">🇰🇷</div>
+        <div class="name">한국어</div>
+        <div class="sample">
+          <div class="title">체리 청축</div>
+          <div class="item">버블</div>
+          <div class="item">설정</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="font-note">
+      <b>字体方案：Ark Pixel（方舟像素字体）</b><br/>
+      ✦ 开源免费（OFL 协议）· 同一套字形覆盖中英日韩，<b>样式连贯</b><br/>
+      ✦ 作者持续维护，GitHub: TakWolf/ark-pixel-font<br/>
+      ✦ 12px / 16px 双号尺寸，对像素 UI 完美<br/>
+      ✦ 兜底：英文用 ark-pixel · CJK 缺字回退到 Boutique Bitmap 9x9 / Galmuri 11<br/><br/>
+      <b>布局上：</b>所有文案行用 flex 自适应宽度（不写死 px），按钮 padding 用 em 而非 px → 长字符串能撑开但不溢出
+    </div>
+  </div>
+
+  <!-- 2. FIRST RUN -->
+  <div class="section">
+    <h3><span class="section-num">2</span> 首次启动流程 <span class="rec-tag">★ 4 步引导</span></h3>
+    <div class="sub">Mac 监听全局键盘需要「辅助功能」权限 · 这是最容易劝退用户的一步，必须做好</div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h4>WELCOME</h4>
+        <p>欢迎页 · 自动选好系统语言 · 一键 GET STARTED</p>
+        <div class="step-screen">
+          <div style="font-size:14px">🫧</div>
+          <div style="font-weight:900; font-size:11px">BUBBLEKEYS</div>
+          <div style="font-size:8px; color:#5d5d8f">Welcome / 欢迎</div>
+          <span class="mini-btn">▶ START</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h4>WHY 权限</h4>
+        <p>用大白话解释：「需要听键盘 = 才能配音效」<b>（先解释再申请，不突兀）</b></p>
+        <div class="step-screen">
+          <div style="font-size:11px; font-weight:900">⚠ NEED ACCESS</div>
+          <div style="font-size:8px; color:#5d5d8f; margin-top:4px">为了在你敲键时<br/>同步播放音效</div>
+          <span class="mini-btn">⚙ OPEN SETTINGS</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h4>系统弹窗 · 截图引导</h4>
+        <p>App 自动跳到「系统设置 → 隐私 → 辅助功能」+ <b>显示像素风截图标注「点这里 →」</b></p>
+        <div class="step-screen">
+          <div style="font-size:9px; background:#a3e6c5; padding:2px; border:1px solid #2d2d5f">⏵ Accessibility</div>
+          <div style="font-size:8px; color:#8f2d5d; margin-top:4px">↑ 把 BubbleKeys 打勾</div>
+          <div style="font-size:7px; color:#5d5d8f; margin-top:2px">权限给了会自动跳回</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <h4>试听 + 完成</h4>
+        <p>引导用户敲两下键盘 + 切一遍包试听 → 完成进入主界面</p>
+        <div class="step-screen">
+          <div style="font-size:11px; font-weight:900">✓ READY!</div>
+          <div style="font-size:8px; color:#5d5d8f; margin-top:4px">敲几下试试 ⌨</div>
+          <span class="mini-btn" style="background:#f5b5d4">♪ Cherry Blue</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. DISTRIBUTION -->
+  <div class="section">
+    <h3><span class="section-num">3</span> 分发渠道 <span class="rec-tag">★ GitHub + Homebrew</span></h3>
+    <div class="sub">开源 Mac 工具的标配组合 · 不走 Mac App Store</div>
+
+    <div class="dist-grid">
+      <div class="dist-card primary">
+        <h4>① GitHub Releases</h4>
+        <p>每个 tag 自动构建 .dmg + .zip 上传 · GitHub Actions 全自动化签名（个人开发者证书 / Sparkle 自动更新）</p>
+        <div class="verdict">✓ 主分发渠道</div>
+      </div>
+      <div class="dist-card primary">
+        <h4>② Homebrew Cask</h4>
+        <p><code style="font-size:10px">brew install --cask bubblekeys</code> · 开源 Mac 软件的「正确打开方式」· 提交一个 cask formula 即可</p>
+        <div class="verdict">✓ 第二渠道（必备）</div>
+      </div>
+      <div class="dist-card skip">
+        <h4>③ Mac App Store</h4>
+        <p>需要 99/年的开发者账号 · App Store 沙箱不允许全局键盘监听 · <b>本质上做不了</b></p>
+        <div class="verdict">✗ 跳过</div>
+      </div>
+    </div>
+
+    <div class="font-note" style="margin-top:14px">
+      <b>签名方案：</b>不强制 Apple notarization（要 99/年）· 走「<b>开源项目自签名 + 用户 ⌃右键打开</b>」路线 · README 写清楚步骤<br/>
+      <b>未来如果有赞助：</b>升级到 notarized DMG（一键打开免警告）
+    </div>
+  </div>
+
+  <!-- 4. LICENSE & PACKS -->
+  <div class="section">
+    <h3><span class="section-num">4</span> 协议 + 默认音效包 <span class="rec-tag">★ MIT + 4 包</span></h3>
+    <div class="sub">协议 = MIT（最宽松）· 4 个开箱即用的内置包，封面像素艺术风格统一</div>
+
+    <div class="pack-grid">
+      <div class="pack-card">
+        <div class="pack-icon">🟦</div>
+        <h4>CHERRY BLUE</h4>
+        <div class="desc">青轴 · 清脆<br/>"咔哒咔哒"</div>
+        <div class="src">CC0 Mechvibes</div>
+      </div>
+      <div class="pack-card" style="background:#f5b5d4">
+        <div class="pack-icon">🟥</div>
+        <h4>CHERRY RED</h4>
+        <div class="desc">红轴 · 顺滑<br/>无段落音</div>
+        <div class="src">CC0 Mechvibes</div>
+      </div>
+      <div class="pack-card" style="background:#c5a578">
+        <div class="pack-icon">🟫</div>
+        <h4>CHERRY BROWN</h4>
+        <div class="desc">茶轴 · 折中<br/>有段落但轻</div>
+        <div class="src">CC0 Mechvibes</div>
+      </div>
+      <div class="pack-card" style="background:#a3e6c5">
+        <div class="pack-icon">🫧</div>
+        <h4>BUBBLES</h4>
+        <div class="desc">原创泡泡<br/>音 · 治愈系</div>
+        <div class="src">原创 (CC-BY)</div>
+      </div>
+    </div>
+
+    <div class="font-note" style="margin-top:14px">
+      <b>音源策略：</b>3 个轴体音直接用 Mechvibes 社区已有的 CC0 包（合法且省事）· <b>1 个原创泡泡包是我们的差异化</b><br/>
+      <b>开源协议：</b>代码 MIT · 默认音效包各自标注独立 license · 用户上传自定义包不受我们协议约束
+    </div>
+  </div>
+
+</div>
+
+<div class="summary-bar">
+  ✦ 上述 4 项全部默认<b>批准</b> ✦<br/>
+  <span style="font-size:12px; opacity:0.8">如有要调整的，指出来即可</span>
+</div>

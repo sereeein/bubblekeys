@@ -1,0 +1,324 @@
+<style>
+  body {
+    background: linear-gradient(180deg, #b5c8f5 0%, #d4b5f5 100%) !important;
+    font-family: 'Courier New', monospace !important;
+  }
+  .q-title {
+    font-size: 26px;
+    color: #2d2d5f;
+    text-align: center;
+    letter-spacing: 3px;
+    margin: 20px 0 4px;
+    font-weight: 900;
+    text-shadow: 3px 3px 0 #f5b5d4;
+  }
+  .q-sub {
+    font-size: 13px;
+    color: #5d5d8f;
+    text-align: center;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  /* === Mac top bar mockup === */
+  .mac-frame {
+    background: #fff;
+    border: 4px solid #2d2d5f;
+    box-shadow: 6px 6px 0 #2d2d5f;
+    margin-bottom: 30px;
+  }
+  .mac-bar {
+    background: linear-gradient(180deg, #2d2d5f 0%, #1a1a3a 100%);
+    height: 26px;
+    display: flex;
+    align-items: center;
+    color: #b5c8f5;
+    font-size: 11px;
+    letter-spacing: 1px;
+    padding: 0 12px;
+  }
+  .mac-bar .left { font-weight: 900; }
+  .mac-bar .right { margin-left: auto; display: flex; gap: 12px; align-items: center; }
+  .mb-icon {
+    width: 16px; height: 16px;
+    background: #f5b5d4;
+    border: 1px solid #b5c8f5;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: #2d2d5f;
+  }
+  .mb-icon.bk { background: #a3e6c5; box-shadow: 0 0 0 2px #fff; }
+  .arrow-down {
+    font-size: 18px;
+    color: #f5b5d4;
+    text-align: center;
+    margin: 6px 0 0 0;
+    animation: bounce 1.5s infinite;
+  }
+  @keyframes bounce { 0%,100% { transform: translateY(0) } 50% { transform: translateY(4px) } }
+
+  .desktop-area {
+    background: linear-gradient(180deg, #b5c8f5 0%, #d4b5f5 100%);
+    min-height: 280px;
+    padding: 12px 20px 20px;
+    position: relative;
+  }
+  .dropdown {
+    background: #fff;
+    border: 3px solid #2d2d5f;
+    width: 280px;
+    margin-left: auto;
+    padding: 12px;
+    box-shadow: 4px 4px 0 #1a1a3a;
+    margin-right: 16px;
+  }
+  .dd-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #2d2d5f;
+    padding-bottom: 6px;
+    margin-bottom: 8px;
+  }
+  .dd-header .name { font-size: 12px; font-weight: 900; color: #2d2d5f; letter-spacing: 1px; }
+  .dd-toggle {
+    background: #a3e6c5; border: 2px solid #2d2d5f;
+    padding: 2px 8px; font-size: 10px; font-weight: 900;
+  }
+  .dd-section-label {
+    font-size: 9px; color: #5d5d8f; letter-spacing: 2px;
+    margin: 8px 0 4px;
+  }
+  .dd-pack-row {
+    display: flex; align-items: center; gap: 6px;
+    background: #b5c8f5; border: 1px solid #2d2d5f;
+    padding: 4px 6px; font-size: 11px; color: #2d2d5f;
+    margin-bottom: 3px;
+  }
+  .dd-pack-row.active { background: #a3e6c5; font-weight: 900; }
+  .dd-pack-row .check { width: 10px; }
+  .dd-vol { display: flex; align-items: center; gap: 8px; margin: 8px 0; }
+  .dd-vol-label { font-size: 10px; color: #5d5d8f; letter-spacing: 1px; }
+  .dd-vol-bar { flex: 1; height: 10px; background: #d4b5f5; border: 1px solid #2d2d5f; position: relative; }
+  .dd-vol-bar::after { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 65%; background: #f5b5d4; }
+  .dd-footer {
+    display: flex; justify-content: space-between;
+    border-top: 2px solid #2d2d5f;
+    padding-top: 6px; margin-top: 8px;
+    font-size: 10px;
+  }
+  .dd-footer a { color: #2d2d5f; font-weight: 900; cursor: pointer; }
+
+  /* === Daily flow comparison === */
+  .flow-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 30px;
+  }
+  .flow-card {
+    background: #fff;
+    border: 4px solid #2d2d5f;
+    box-shadow: 6px 6px 0 #2d2d5f;
+    padding: 20px;
+  }
+  .flow-card h3 {
+    margin: 0 0 4px 0;
+    font-size: 16px;
+    color: #2d2d5f;
+    letter-spacing: 2px;
+  }
+  .flow-card .when {
+    font-size: 11px;
+    color: #5d5d8f;
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+  }
+  .flow-card.menubar { background: #c5e8d5; }
+  .flow-card.window { background: #f5d4e8; }
+  .flow-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 12px;
+    color: #2d2d5f;
+    line-height: 1.9;
+  }
+  .flow-list li {
+    padding-left: 22px;
+    position: relative;
+    margin-bottom: 4px;
+  }
+  .flow-list li::before {
+    content: '▶';
+    position: absolute;
+    left: 0;
+    color: #8f2d5d;
+  }
+  .freq {
+    display: inline-block;
+    background: #2d2d5f;
+    color: #fff;
+    font-size: 9px;
+    padding: 2px 6px;
+    margin-left: 6px;
+    letter-spacing: 1px;
+  }
+  .freq.high { background: #2d8f5d; }
+  .freq.low { background: #8f5d2d; }
+
+  /* === Story sequence === */
+  .story {
+    background: #fff;
+    border: 4px solid #2d2d5f;
+    box-shadow: 6px 6px 0 #2d2d5f;
+    padding: 24px;
+    margin-top: 20px;
+  }
+  .story h3 {
+    margin: 0 0 4px;
+    font-size: 16px;
+    color: #2d2d5f;
+    letter-spacing: 2px;
+  }
+  .story-sub {
+    font-size: 11px;
+    color: #5d5d8f;
+    letter-spacing: 1px;
+    margin-bottom: 18px;
+  }
+  .story-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  .story-step {
+    background: #b5c8f5;
+    border: 2px solid #2d2d5f;
+    padding: 10px 8px;
+    font-size: 11px;
+    color: #2d2d5f;
+    line-height: 1.5;
+    position: relative;
+  }
+  .story-step .num {
+    background: #2d2d5f;
+    color: #fff;
+    width: 22px; height: 22px;
+    text-align: center; line-height: 22px;
+    font-weight: 900;
+    margin-bottom: 6px;
+  }
+  .story-step b { color: #8f2d5d; }
+</style>
+
+<div class="q-title">菜单栏下拉是干嘛的？</div>
+<div class="q-sub">★ Mac 上「常驻小工具」的标准套路 ★</div>
+
+<div class="container">
+
+  <!-- Mac frame with menu bar visualization -->
+  <div class="mac-frame">
+    <div class="mac-bar">
+      <span class="left">  Finder</span>
+      <span class="right">
+        <span class="mb-icon" style="background:#fff;color:#2d2d5f">A</span>
+        <span class="mb-icon" style="background:#d4b5f5">⌘</span>
+        <span class="mb-icon bk">🫧</span>
+        <span>🔋</span>
+        <span>🔊</span>
+        <span>EN</span>
+        <span>16:42</span>
+      </span>
+    </div>
+    <div style="text-align:right; padding-right:60px;">
+      <div class="arrow-down">▼ 这个 🫧 图标</div>
+    </div>
+    <div class="desktop-area">
+      <div class="dropdown">
+        <div class="dd-header">
+          <div class="name">🫧 BubbleKeys</div>
+          <div class="dd-toggle">ON</div>
+        </div>
+        <div class="dd-section-label">CURRENT PACK</div>
+        <div class="dd-pack-row active"><span class="check">✓</span> Cherry Blue</div>
+        <div class="dd-pack-row"><span class="check"></span> Cherry Red</div>
+        <div class="dd-pack-row"><span class="check"></span> Bubbles</div>
+        <div class="dd-vol">
+          <span class="dd-vol-label">VOL</span>
+          <div class="dd-vol-bar"></div>
+          <span class="dd-vol-label">65</span>
+        </div>
+        <div class="dd-footer">
+          <a>⚙ Open BubbleKeys</a>
+          <a>⏻ Quit</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comparison: when do you use which -->
+  <div class="flow-grid">
+    <div class="flow-card menubar">
+      <h3>🫧 菜单栏下拉</h3>
+      <div class="when">★ 高频 · 不打断工作 ★</div>
+      <ul class="flow-list">
+        <li>开会前一秒静音 <span class="freq high">每天 3-5 次</span></li>
+        <li>切到「泡泡」放松一下 <span class="freq high">随时</span></li>
+        <li>把音量调小一格 <span class="freq high">高频</span></li>
+        <li>看「现在是开着的吗」<span class="freq high">高频</span></li>
+      </ul>
+    </div>
+    <div class="flow-card window">
+      <h3>🎮 Game Boy 主窗口</h3>
+      <div class="when">★ 低频 · 配置/管理 ★</div>
+      <ul class="flow-list">
+        <li>第一次设置（选默认包、设快捷键）<span class="freq low">一次</span></li>
+        <li>导入新的 Mechvibes 包 <span class="freq low">偶尔</span></li>
+        <li>改快捷键、改语言 <span class="freq low">偶尔</span></li>
+        <li>看 GitHub / 检查更新 <span class="freq low">很少</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Real story -->
+  <div class="story">
+    <h3>真实场景：开会前 2 秒</h3>
+    <div class="story-sub">★ 这就是为什么要有菜单栏 ★</div>
+    <div class="story-steps">
+      <div class="story-step">
+        <div class="num">1</div>
+        Zoom 弹出来要开会了，<b>你正在打字，不想被听到机械音</b>
+      </div>
+      <div class="story-step">
+        <div class="num">2</div>
+        如果<b>没有菜单栏</b>：要 <b>⌘+空格</b> 找 BubbleKeys → 等窗口打开 → 点 OFF
+      </div>
+      <div class="story-step">
+        <div class="num">3</div>
+        有菜单栏：直接<b>瞥一眼右上角 → 点一下 🫧 → 点 OFF</b> · 全程 1 秒
+      </div>
+      <div class="story-step">
+        <div class="num">4</div>
+        会后：再点一下 ON，继续打字 ♪<br/>· <b>不需要打开主窗口</b>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center; margin: 24px 0; color: #2d2d5f; font-size: 13px; line-height:1.7; background: #fff; border: 3px solid #2d2d5f; padding: 16px; box-shadow: 4px 4px 0 #2d2d5f;">
+    💡 <b>简单说：</b><br/>
+    主窗口 = <b>「设置中心」</b>，你需要时才打开（关了不影响打字音效继续工作）<br/>
+    菜单栏 = <b>「遥控器」</b>，永远在右上角，1 秒能改最常用的 3 件事<br/><br/>
+    <span style="color:#5d5d8f; font-size:12px">类似 Mac 上的 控制中心 / 通知中心 / 蓝牙图标 / 音量图标 —— 都是这个套路</span>
+  </div>
+
+</div>

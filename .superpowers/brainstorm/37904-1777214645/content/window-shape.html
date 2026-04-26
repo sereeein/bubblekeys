@@ -1,0 +1,325 @@
+<style>
+  body {
+    background: linear-gradient(180deg, #b5c8f5 0%, #d4b5f5 100%) !important;
+    font-family: 'Courier New', monospace !important;
+  }
+  .q-title {
+    font-size: 28px;
+    color: #2d2d5f;
+    text-align: center;
+    letter-spacing: 3px;
+    margin: 20px 0 8px;
+    font-weight: 900;
+    text-shadow: 3px 3px 0 #f5b5d4;
+  }
+  .q-sub {
+    font-size: 13px;
+    color: #5d5d8f;
+    text-align: center;
+    letter-spacing: 1px;
+    margin-bottom: 30px;
+  }
+  .options-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  .option-card {
+    background: #fff;
+    border: 4px solid #2d2d5f;
+    box-shadow: 6px 6px 0 #2d2d5f;
+    padding: 20px;
+    cursor: pointer;
+    transition: transform 0.1s;
+    image-rendering: pixelated;
+  }
+  .option-card:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 #2d2d5f; }
+  .option-card.selected { background: #a3e6c5; }
+  .option-letter {
+    display: inline-block;
+    background: #2d2d5f;
+    color: #fff;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    font-weight: 900;
+    margin-bottom: 12px;
+  }
+  .option-card h3 {
+    margin: 0 0 6px 0;
+    color: #2d2d5f;
+    font-size: 16px;
+    letter-spacing: 1px;
+  }
+  .option-card .tag {
+    font-size: 11px;
+    color: #5d5d8f;
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+  }
+  .preview {
+    background: #b5c8f5;
+    border: 3px solid #2d2d5f;
+    margin: 14px 0;
+    padding: 14px;
+    min-height: 240px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ===== Layout A: Game Boy 手持机 ===== */
+  .gameboy {
+    background: #f5b5d4;
+    border: 3px solid #2d2d5f;
+    border-radius: 4px 4px 30px 30px;
+    padding: 12px 12px 30px;
+    width: 160px;
+    box-shadow: 3px 3px 0 #2d2d5f;
+  }
+  .gameboy-screen {
+    background: #a3e6c5;
+    border: 2px solid #2d2d5f;
+    padding: 8px;
+    margin-bottom: 10px;
+    color: #2d2d5f;
+    font-size: 9px;
+    text-align: center;
+    height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .gameboy-screen .title { font-weight: 900; font-size: 11px; margin-bottom: 4px; }
+  .gameboy-screen .sub { font-size: 8px; color: #5d5d8f; }
+  .gameboy-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    align-items: center;
+  }
+  .gb-dpad {
+    width: 36px; height: 36px;
+    background: #2d2d5f;
+    margin: 0 auto;
+    position: relative;
+  }
+  .gb-action {
+    display: flex;
+    gap: 6px;
+    justify-content: flex-end;
+  }
+  .gb-btn {
+    width: 18px; height: 18px;
+    background: #d4b5f5;
+    border: 2px solid #2d2d5f;
+    border-radius: 50%;
+  }
+
+  /* ===== Layout B: Pixel Dashboard ===== */
+  .dashboard {
+    background: #b5c8f5;
+    border: 2px solid #2d2d5f;
+    width: 100%;
+    height: 200px;
+    display: grid;
+    grid-template-columns: 60px 1fr;
+  }
+  .db-sidebar {
+    background: #2d2d5f;
+    padding: 8px 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .db-nav-item {
+    background: #d4b5f5;
+    height: 18px;
+    border: 1px solid #fff;
+  }
+  .db-nav-item.active { background: #a3e6c5; }
+  .db-main { padding: 10px; }
+  .db-main .title-bar { font-size: 10px; color: #2d2d5f; font-weight: 900; margin-bottom: 8px; }
+  .db-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .db-card {
+    background: #fff;
+    border: 2px solid #2d2d5f;
+    height: 50px;
+    padding: 4px;
+    font-size: 8px;
+    color: #2d2d5f;
+  }
+  .db-card.selected { background: #f5b5d4; }
+
+  /* ===== Layout C: 菜单栏下拉 ===== */
+  .menubar-wrap {
+    background: #2d2d5f;
+    width: 100%;
+    height: 240px;
+    position: relative;
+    padding-top: 18px;
+  }
+  .menubar-top {
+    position: absolute; top: 0; left: 0; right: 0;
+    background: #1a1a3a;
+    height: 14px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-right: 6px;
+    gap: 4px;
+  }
+  .menubar-icon { width: 8px; height: 8px; background: #d4b5f5; }
+  .menubar-icon.active { background: #a3e6c5; box-shadow: 0 0 0 2px #fff; }
+  .dropdown-panel {
+    background: #fff;
+    border: 2px solid #2d2d5f;
+    width: 130px;
+    margin: 0 auto;
+    padding: 10px;
+    margin-right: 4px;
+    margin-left: auto;
+    box-shadow: 3px 3px 0 #1a1a3a;
+  }
+  .dd-title { font-size: 9px; font-weight: 900; color: #2d2d5f; margin-bottom: 6px; }
+  .dd-row {
+    background: #b5c8f5;
+    border: 1px solid #2d2d5f;
+    padding: 3px;
+    font-size: 8px;
+    color: #2d2d5f;
+    margin-bottom: 3px;
+  }
+  .dd-row.active { background: #a3e6c5; }
+  .dd-slider {
+    background: #d4b5f5;
+    height: 6px;
+    border: 1px solid #2d2d5f;
+    margin-top: 4px;
+    position: relative;
+  }
+  .dd-slider::after {
+    content: ''; position: absolute; left: 60%; top: -2px;
+    width: 8px; height: 10px; background: #f5b5d4; border: 1px solid #2d2d5f;
+  }
+
+  .pros-cons-list {
+    margin-top: 14px;
+    font-size: 12px;
+    line-height: 1.7;
+    color: #5d5d8f;
+  }
+  .pros-cons-list .pro { color: #2d8f5d; }
+  .pros-cons-list .con { color: #8f2d5d; }
+</style>
+
+<div class="q-title">Q3 / 窗口形态</div>
+<div class="q-sub">★ 选 1 个作为主界面骨架 ★ 这决定了之后所有交互的感觉</div>
+
+<div class="options-row">
+
+  <!-- Option A -->
+  <div class="option-card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="option-letter">A</div>
+    <h3>掌机风（Game Boy）</h3>
+    <div class="tag">~ 320 × 480 · 单窗口</div>
+    <div class="preview">
+      <div class="gameboy">
+        <div class="gameboy-screen">
+          <div class="title">▶ CHERRY BLUE</div>
+          <div class="sub">VOL ▮▮▮▯▯</div>
+          <div class="sub" style="margin-top:6px">● PLAYING</div>
+        </div>
+        <div class="gameboy-buttons">
+          <div class="gb-dpad"></div>
+          <div class="gb-action">
+            <div class="gb-btn"></div>
+            <div class="gb-btn"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pros-cons-list">
+      <div class="pro">+ 视觉冲击最强，跟参考图最契合</div>
+      <div class="pro">+ 「玩具感」记忆点，社交传播力强</div>
+      <div class="con">– 信息密度低，配置项多了会挤</div>
+      <div class="con">– 自定义包列表浏览不方便</div>
+    </div>
+  </div>
+
+  <!-- Option B -->
+  <div class="option-card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="option-letter">B</div>
+    <h3>像素 Dashboard</h3>
+    <div class="tag">~ 720 × 480 · 侧栏 + 主区</div>
+    <div class="preview" style="padding:0">
+      <div class="dashboard">
+        <div class="db-sidebar">
+          <div class="db-nav-item active"></div>
+          <div class="db-nav-item"></div>
+          <div class="db-nav-item"></div>
+          <div class="db-nav-item"></div>
+        </div>
+        <div class="db-main">
+          <div class="title-bar">★ SOUND PACKS</div>
+          <div class="db-grid">
+            <div class="db-card selected">CHERRY<br/>BLUE</div>
+            <div class="db-card">CHERRY<br/>RED</div>
+            <div class="db-card">CHERRY<br/>BROWN</div>
+            <div class="db-card">BUBBLES</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pros-cons-list">
+      <div class="pro">+ 信息组织清晰，扩展性最强</div>
+      <div class="pro">+ 浏览/管理音效包最舒服</div>
+      <div class="pro">+ 像参考图里 "About Me" 那一页的结构</div>
+      <div class="con">– 玩具感弱一点，更像「软件」</div>
+    </div>
+  </div>
+
+  <!-- Option C -->
+  <div class="option-card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="option-letter">C</div>
+    <h3>纯菜单栏下拉</h3>
+    <div class="tag">~ 280 × 360 · 无主窗口</div>
+    <div class="preview" style="padding:0">
+      <div class="menubar-wrap">
+        <div class="menubar-top">
+          <div class="menubar-icon active"></div>
+          <div class="menubar-icon"></div>
+          <div class="menubar-icon"></div>
+        </div>
+        <div class="dropdown-panel">
+          <div class="dd-title">★ BUBBLEKEYS</div>
+          <div class="dd-row active">▶ Cherry Blue</div>
+          <div class="dd-row">  Cherry Red</div>
+          <div class="dd-row">  Bubbles</div>
+          <div class="dd-row">  Browse...</div>
+          <div class="dd-slider"></div>
+        </div>
+      </div>
+    </div>
+    <div class="pros-cons-list">
+      <div class="pro">+ 最轻量、最不打扰</div>
+      <div class="pro">+ 用户实际使用频率最匹配</div>
+      <div class="con">– 像素风的 "wow" 视觉空间被压缩</div>
+      <div class="con">– 复杂功能（自定义包）藏不进去</div>
+    </div>
+  </div>
+
+</div>
+
+<div style="text-align:center; margin: 30px 20px; color: #2d2d5f; font-size: 13px; line-height: 1.8; max-width: 800px; margin-left:auto; margin-right:auto; background: #fff; border: 3px solid #2d2d5f; padding: 16px; box-shadow: 4px 4px 0 #2d2d5f;">
+  💡 <b>我的推荐：A + C 组合</b><br/>
+  <span style="font-size:12px; color:#5d5d8f">主窗口用 Game Boy 风（视觉记忆点）+ 菜单栏图标常驻（点击弹出 C 那种迷你下拉做快捷切换）。<br/>设置/包管理可以在主窗口里翻页（D-pad 切换页签），而不是另外开 sidebar。</span>
+</div>

@@ -1,0 +1,581 @@
+<style>
+  body {
+    background: linear-gradient(180deg, #b5c8f5 0%, #d4b5f5 100%) !important;
+    font-family: 'Courier New', monospace !important;
+  }
+  .q-title {
+    font-size: 28px;
+    color: #2d2d5f;
+    text-align: center;
+    letter-spacing: 3px;
+    margin: 20px 0 8px;
+    font-weight: 900;
+    text-shadow: 3px 3px 0 #f5b5d4;
+  }
+  .q-sub {
+    font-size: 13px;
+    color: #5d5d8f;
+    text-align: center;
+    letter-spacing: 1px;
+    margin-bottom: 24px;
+  }
+
+  /* === Page grid (4 game boys side by side) === */
+  .pages {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    max-width: 1300px;
+    margin: 0 auto 30px;
+    padding: 0 16px;
+  }
+  .page-label {
+    text-align: center;
+    font-size: 11px;
+    color: #2d2d5f;
+    font-weight: 900;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  .page-label .nav-key { color: #8f2d5d; }
+
+  /* === Game Boy === */
+  .gb {
+    background: #f5b5d4;
+    border: 4px solid #2d2d5f;
+    border-radius: 6px 6px 40px 40px;
+    box-shadow: 6px 6px 0 #2d2d5f;
+    padding: 14px 14px 24px;
+    width: 100%;
+    box-sizing: border-box;
+    image-rendering: pixelated;
+  }
+  .gb-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 9px;
+    color: #2d2d5f;
+    font-weight: 900;
+    letter-spacing: 1px;
+  }
+  .led {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #a3e6c5;
+    box-shadow: 0 0 0 1px #2d2d5f;
+    display: inline-block;
+  }
+  .led.off { background: #d4b5f5; }
+  .gb-screen {
+    background: #c5e8d5;
+    border: 3px solid #2d2d5f;
+    padding: 0;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  /* tabs at top of screen */
+  .scr-tabs {
+    display: flex;
+    background: #2d2d5f;
+    border-bottom: 2px solid #2d2d5f;
+  }
+  .scr-tab {
+    flex: 1;
+    text-align: center;
+    font-size: 9px;
+    color: #b5c8f5;
+    padding: 4px 2px;
+    letter-spacing: 1px;
+    border-right: 1px solid #1a1a3a;
+  }
+  .scr-tab:last-child { border-right: 0; }
+  .scr-tab.active { background: #a3e6c5; color: #2d2d5f; font-weight: 900; }
+  .scr-body {
+    flex: 1;
+    padding: 8px;
+    color: #2d2d5f;
+    font-size: 10px;
+    line-height: 1.5;
+    overflow: hidden;
+  }
+
+  /* === Controls === */
+  .gb-controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin-top: 14px;
+    align-items: center;
+  }
+  .dpad {
+    width: 50px; height: 50px;
+    position: relative;
+    margin: 0 auto;
+  }
+  .dpad-h, .dpad-v {
+    position: absolute;
+    background: #2d2d5f;
+  }
+  .dpad-h { top: 18px; left: 0; right: 0; height: 14px; }
+  .dpad-v { left: 18px; top: 0; bottom: 0; width: 14px; }
+  .dpad-arrow {
+    position: absolute;
+    color: #f5b5d4;
+    font-size: 9px;
+    line-height: 1;
+    font-weight: 900;
+  }
+  .dpad-arrow.up { top: 1px; left: 50%; transform: translateX(-50%); }
+  .dpad-arrow.down { bottom: 1px; left: 50%; transform: translateX(-50%); }
+  .dpad-arrow.left { left: 2px; top: 50%; transform: translateY(-50%); }
+  .dpad-arrow.right { right: 2px; top: 50%; transform: translateY(-50%); }
+  .ab-buttons { display: flex; gap: 8px; justify-content: flex-end; }
+  .ab-btn {
+    width: 22px; height: 22px;
+    background: #d4b5f5;
+    border: 2px solid #2d2d5f;
+    border-radius: 50%;
+    color: #2d2d5f;
+    text-align: center;
+    line-height: 18px;
+    font-size: 10px;
+    font-weight: 900;
+  }
+  .startsel {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 8px;
+    color: #2d2d5f;
+    letter-spacing: 1px;
+  }
+
+  /* ==== Page-specific content styles ==== */
+  /* HOME page */
+  .home-pack-name {
+    font-size: 16px; font-weight: 900; text-align: center;
+    margin-top: 4px; letter-spacing: 1px;
+  }
+  .home-art {
+    height: 50px; background: #fff; border: 2px solid #2d2d5f;
+    margin: 6px 0; display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .home-vol-row {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 9px; margin-top: 4px;
+  }
+  .home-vol {
+    flex: 1; height: 8px; background: #fff; border: 1px solid #2d2d5f;
+    position: relative;
+  }
+  .home-vol::after {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 65%; background: #f5b5d4;
+  }
+  .home-toggle {
+    margin-top: 8px;
+    background: #a3e6c5; border: 2px solid #2d2d5f;
+    text-align: center; padding: 4px;
+    font-weight: 900; font-size: 10px;
+  }
+
+  /* PACKS page */
+  .pack-list { display: flex; flex-direction: column; gap: 4px; }
+  .pack-row {
+    background: #fff; border: 1px solid #2d2d5f;
+    padding: 4px 6px; font-size: 9px;
+    display: flex; justify-content: space-between;
+  }
+  .pack-row.sel { background: #f5b5d4; font-weight: 900; }
+  .pack-row.sel::before { content: '▶ '; }
+  .pack-import {
+    margin-top: 4px;
+    background: #d4b5f5; border: 2px dashed #2d2d5f;
+    text-align: center; font-size: 9px; padding: 4px;
+  }
+
+  /* SETTINGS page */
+  .set-row {
+    display: flex; justify-content: space-between; align-items: center;
+    background: #fff; border: 1px solid #2d2d5f;
+    padding: 3px 5px; font-size: 9px;
+    margin-bottom: 3px;
+  }
+  .set-val {
+    background: #b5c8f5; padding: 1px 4px;
+    border: 1px solid #2d2d5f;
+    font-size: 8px;
+  }
+  .set-val.on { background: #a3e6c5; }
+
+  /* ABOUT page */
+  .about-logo {
+    text-align: center; font-size: 14px; font-weight: 900;
+    letter-spacing: 2px; margin-top: 8px; color: #2d2d5f;
+  }
+  .about-emoji { font-size: 24px; text-align: center; margin: 6px 0; }
+  .about-row {
+    text-align: center; font-size: 9px; margin-top: 4px; color: #5d5d8f;
+  }
+  .about-link {
+    margin-top: 6px;
+    background: #d4b5f5; border: 2px solid #2d2d5f;
+    text-align: center; font-size: 9px; padding: 3px;
+    font-weight: 900;
+  }
+
+  /* === Menu bar dropdown === */
+  .menubar-section {
+    background: #fff;
+    border: 4px solid #2d2d5f;
+    box-shadow: 6px 6px 0 #2d2d5f;
+    max-width: 720px;
+    margin: 30px auto;
+    padding: 24px;
+  }
+  .menubar-section h3 {
+    margin: 0 0 16px;
+    color: #2d2d5f;
+    font-size: 16px;
+    letter-spacing: 2px;
+  }
+  .mac-menubar {
+    background: linear-gradient(180deg, #2d2d5f 0%, #1a1a3a 100%);
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 0 12px;
+    color: #b5c8f5;
+    font-size: 10px;
+    letter-spacing: 1px;
+    border: 2px solid #2d2d5f;
+  }
+  .mb-icon {
+    width: 14px; height: 14px;
+    background: #f5b5d4;
+    border: 1px solid #b5c8f5;
+    image-rendering: pixelated;
+    position: relative;
+  }
+  .mb-icon::after {
+    content: '⌨'; font-size: 8px;
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .mb-icon.active { background: #a3e6c5; box-shadow: 0 0 0 2px #fff; }
+  .dropdown {
+    background: #fff;
+    border: 3px solid #2d2d5f;
+    width: 280px;
+    margin-left: auto;
+    margin-right: 32px;
+    margin-top: -3px;
+    padding: 12px;
+    box-shadow: 4px 4px 0 #1a1a3a;
+  }
+  .dd-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #2d2d5f;
+    padding-bottom: 6px;
+    margin-bottom: 8px;
+  }
+  .dd-header .name { font-size: 12px; font-weight: 900; color: #2d2d5f; letter-spacing: 1px; }
+  .dd-toggle {
+    background: #a3e6c5; border: 2px solid #2d2d5f;
+    padding: 2px 8px; font-size: 10px; font-weight: 900;
+  }
+  .dd-section-label {
+    font-size: 9px; color: #5d5d8f; letter-spacing: 2px;
+    margin: 8px 0 4px;
+  }
+  .dd-pack-row {
+    display: flex; align-items: center; gap: 6px;
+    background: #b5c8f5; border: 1px solid #2d2d5f;
+    padding: 4px 6px; font-size: 11px; color: #2d2d5f;
+    margin-bottom: 3px;
+    cursor: pointer;
+  }
+  .dd-pack-row.active { background: #a3e6c5; font-weight: 900; }
+  .dd-pack-row .check { width: 10px; }
+  .dd-vol {
+    display: flex; align-items: center; gap: 8px;
+    margin: 8px 0;
+  }
+  .dd-vol-label { font-size: 10px; color: #5d5d8f; letter-spacing: 1px; }
+  .dd-vol-bar {
+    flex: 1; height: 10px; background: #d4b5f5; border: 1px solid #2d2d5f; position: relative;
+  }
+  .dd-vol-bar::after {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 65%; background: #f5b5d4;
+  }
+  .dd-footer {
+    display: flex; justify-content: space-between;
+    border-top: 2px solid #2d2d5f;
+    padding-top: 6px; margin-top: 8px;
+    font-size: 10px; color: #5d5d8f;
+  }
+  .dd-footer a { color: #2d2d5f; font-weight: 900; cursor: pointer; }
+
+  /* === Decision panel === */
+  .decision {
+    text-align: center;
+    margin: 30px 20px;
+    color: #2d2d5f;
+    background: #fff;
+    border: 3px solid #2d2d5f;
+    padding: 18px;
+    max-width: 800px;
+    margin: 30px auto;
+    box-shadow: 4px 4px 0 #2d2d5f;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .decision b { color: #8f2d5d; }
+  .key-rule {
+    display: inline-block;
+    background: #2d2d5f; color: #fff;
+    padding: 1px 6px; margin: 0 2px;
+    font-family: monospace; font-size: 11px;
+  }
+</style>
+
+<div class="q-title">Q4 / 主窗口信息架构</div>
+<div class="q-sub">★ 4 个固定页面，左右切换 · 每页一个清晰主角 ★</div>
+
+<!-- Four Game Boys, one per page -->
+<div class="pages">
+
+  <!-- HOME -->
+  <div>
+    <div class="page-label"><span class="nav-key">←</span> 1 · HOME <span class="nav-key">→</span></div>
+    <div class="gb">
+      <div class="gb-top">
+        <span>BUBBLEKEYS</span>
+        <span>● <span class="led"></span></span>
+      </div>
+      <div class="gb-screen">
+        <div class="scr-tabs">
+          <div class="scr-tab active">HOME</div>
+          <div class="scr-tab">PACK</div>
+          <div class="scr-tab">SET</div>
+          <div class="scr-tab">?</div>
+        </div>
+        <div class="scr-body">
+          <div class="home-pack-name">CHERRY BLUE</div>
+          <div class="home-art">⌨</div>
+          <div class="home-vol-row">
+            <span>VOL</span>
+            <div class="home-vol"></div>
+            <span>65</span>
+          </div>
+          <div class="home-toggle">▶ ON · ⌥⌘B</div>
+        </div>
+      </div>
+      <div class="gb-controls">
+        <div class="dpad">
+          <div class="dpad-h"></div>
+          <div class="dpad-v"></div>
+          <div class="dpad-arrow up">▲</div>
+          <div class="dpad-arrow down">▼</div>
+          <div class="dpad-arrow left">◀</div>
+          <div class="dpad-arrow right">▶</div>
+        </div>
+        <div class="ab-buttons">
+          <div class="ab-btn">B</div>
+          <div class="ab-btn">A</div>
+        </div>
+      </div>
+      <div class="startsel">━ START ━ SELECT</div>
+    </div>
+  </div>
+
+  <!-- PACKS -->
+  <div>
+    <div class="page-label"><span class="nav-key">←</span> 2 · PACKS <span class="nav-key">→</span></div>
+    <div class="gb">
+      <div class="gb-top">
+        <span>BUBBLEKEYS</span>
+        <span>● <span class="led"></span></span>
+      </div>
+      <div class="gb-screen">
+        <div class="scr-tabs">
+          <div class="scr-tab">HOME</div>
+          <div class="scr-tab active">PACK</div>
+          <div class="scr-tab">SET</div>
+          <div class="scr-tab">?</div>
+        </div>
+        <div class="scr-body">
+          <div class="pack-list">
+            <div class="pack-row sel">CHERRY BLUE<span>♪</span></div>
+            <div class="pack-row">CHERRY RED</div>
+            <div class="pack-row">CHERRY BROWN</div>
+            <div class="pack-row">BUBBLES</div>
+            <div class="pack-row">+ MORE</div>
+          </div>
+          <div class="pack-import">+ IMPORT MECHVIBES</div>
+        </div>
+      </div>
+      <div class="gb-controls">
+        <div class="dpad">
+          <div class="dpad-h"></div>
+          <div class="dpad-v"></div>
+          <div class="dpad-arrow up">▲</div>
+          <div class="dpad-arrow down">▼</div>
+          <div class="dpad-arrow left">◀</div>
+          <div class="dpad-arrow right">▶</div>
+        </div>
+        <div class="ab-buttons">
+          <div class="ab-btn">B</div>
+          <div class="ab-btn">A</div>
+        </div>
+      </div>
+      <div class="startsel">━ START ━ SELECT</div>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div>
+    <div class="page-label"><span class="nav-key">←</span> 3 · SETTINGS <span class="nav-key">→</span></div>
+    <div class="gb">
+      <div class="gb-top">
+        <span>BUBBLEKEYS</span>
+        <span>● <span class="led"></span></span>
+      </div>
+      <div class="gb-screen">
+        <div class="scr-tabs">
+          <div class="scr-tab">HOME</div>
+          <div class="scr-tab">PACK</div>
+          <div class="scr-tab active">SET</div>
+          <div class="scr-tab">?</div>
+        </div>
+        <div class="scr-body">
+          <div class="set-row">HOTKEY <span class="set-val">⌥⌘B</span></div>
+          <div class="set-row">AUTOSTART <span class="set-val on">ON</span></div>
+          <div class="set-row">PITCH VAR <span class="set-val on">ON</span></div>
+          <div class="set-row">OUTPUT <span class="set-val">DEFAULT</span></div>
+          <div class="set-row">MENU ICON <span class="set-val on">ON</span></div>
+        </div>
+      </div>
+      <div class="gb-controls">
+        <div class="dpad">
+          <div class="dpad-h"></div>
+          <div class="dpad-v"></div>
+          <div class="dpad-arrow up">▲</div>
+          <div class="dpad-arrow down">▼</div>
+          <div class="dpad-arrow left">◀</div>
+          <div class="dpad-arrow right">▶</div>
+        </div>
+        <div class="ab-buttons">
+          <div class="ab-btn">B</div>
+          <div class="ab-btn">A</div>
+        </div>
+      </div>
+      <div class="startsel">━ START ━ SELECT</div>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <div>
+    <div class="page-label"><span class="nav-key">←</span> 4 · ABOUT <span class="nav-key">→</span></div>
+    <div class="gb">
+      <div class="gb-top">
+        <span>BUBBLEKEYS</span>
+        <span>● <span class="led"></span></span>
+      </div>
+      <div class="gb-screen">
+        <div class="scr-tabs">
+          <div class="scr-tab">HOME</div>
+          <div class="scr-tab">PACK</div>
+          <div class="scr-tab">SET</div>
+          <div class="scr-tab active">?</div>
+        </div>
+        <div class="scr-body">
+          <div class="about-emoji">🫧</div>
+          <div class="about-logo">BUBBLEKEYS</div>
+          <div class="about-row">v0.1.0 · MIT</div>
+          <div class="about-row" style="margin-top:8px">made with ♥</div>
+          <div class="about-link">★ GITHUB ★</div>
+          <div class="about-link" style="background:#a3e6c5">CHECK UPDATES</div>
+        </div>
+      </div>
+      <div class="gb-controls">
+        <div class="dpad">
+          <div class="dpad-h"></div>
+          <div class="dpad-v"></div>
+          <div class="dpad-arrow up">▲</div>
+          <div class="dpad-arrow down">▼</div>
+          <div class="dpad-arrow left">◀</div>
+          <div class="dpad-arrow right">▶</div>
+        </div>
+        <div class="ab-buttons">
+          <div class="ab-btn">B</div>
+          <div class="ab-btn">A</div>
+        </div>
+      </div>
+      <div class="startsel">━ START ━ SELECT</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== Menu Bar Dropdown ===== -->
+<div class="menubar-section">
+  <h3>★ 菜单栏下拉（C 部分） ★</h3>
+  <div class="mac-menubar">
+    <span style="margin-right:auto; padding-left:8px; font-weight:900">  Finder</span>
+    <span>🔋 100%</span>
+    <span>🔊</span>
+    <span class="mb-icon active"></span>
+    <span>🔍</span>
+    <span>EN</span>
+    <span>📅 4/26</span>
+    <span>16:42</span>
+  </div>
+  <div class="dropdown">
+    <div class="dd-header">
+      <div class="name">🫧 BubbleKeys</div>
+      <div class="dd-toggle">ON</div>
+    </div>
+
+    <div class="dd-section-label">CURRENT PACK</div>
+    <div class="dd-pack-row active"><span class="check">✓</span> Cherry Blue</div>
+    <div class="dd-pack-row"><span class="check"></span> Cherry Red</div>
+    <div class="dd-pack-row"><span class="check"></span> Cherry Brown</div>
+    <div class="dd-pack-row"><span class="check"></span> Bubbles</div>
+
+    <div class="dd-vol">
+      <span class="dd-vol-label">VOL</span>
+      <div class="dd-vol-bar"></div>
+      <span class="dd-vol-label">65</span>
+    </div>
+
+    <div class="dd-footer">
+      <a>⚙ Open BubbleKeys</a>
+      <a>⏻ Quit</a>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Decision panel ===== -->
+<div class="decision">
+  <div style="font-size:14px; font-weight:900; margin-bottom:10px; letter-spacing:1px">★ 设计原则 ★</div>
+  <b>清晰可发现：</b>页面顶端永远显示 4 个 tab（点击直跳 / D-pad 左右也可），<b>用户随时知道自己在哪、有哪些其他页</b>。<br/><br/>
+  <b>D-pad 不是装饰：</b>
+  <span class="key-rule">←→</span> 切页 ·
+  <span class="key-rule">↑↓</span> 选项内导航 ·
+  <span class="key-rule">A</span> 确认/试听 ·
+  <span class="key-rule">B</span> 返回。<br/>
+  <b>但鼠标点击 tab/列表项也完全等价</b> —— 双输入冗余，不强迫学习游戏机操作。<br/><br/>
+  <b>每页一个主角：</b>HOME 只看「现在听啥」· PACKS 只看「换什么」· SETTINGS 只调参数 · ABOUT 只放外链。<br/>
+  没有「藏在三级菜单」的功能。
+</div>
+
+<div style="text-align:center; margin: 20px; color: #2d2d5f; font-size: 12px;">
+  ★ 反馈方向 ★ &nbsp; 页面够吗？多了？少了？分组合理吗？
+</div>

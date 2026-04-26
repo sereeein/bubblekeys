@@ -24,5 +24,6 @@ src-tauri/WixTools/
 .env
 .env.local
 
-# Brainstorming workspace (already in repo for reference)
-# .superpowers/  ← keep for now, remove later
+# Brainstorming workspace (HTML mockups archived; runtime state ignored)
+.superpowers/*/*/state/
+.superpowers/*/server-info
