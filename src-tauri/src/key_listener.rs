@@ -2,15 +2,36 @@
 
 use std::thread;
 
-use core_foundation::base::TCFType;
+use core_foundation::base::{CFTypeRef, TCFType};
+use core_foundation::boolean::CFBoolean;
+use core_foundation::dictionary::CFDictionary;
 use core_foundation::runloop::{
     kCFRunLoopCommonModes, CFRunLoopAddSource, CFRunLoopGetCurrent, CFRunLoopRun,
 };
+use core_foundation::string::CFString;
 use core_graphics::event::{
     CGEventTap, CGEventTapLocation, CGEventTapOptions, CGEventTapPlacement,
     CGEventType,
 };
 use crossbeam_channel::{unbounded, Receiver, Sender};
+
+#[link(name = "ApplicationServices", kind = "framework")]
+extern "C" {
+    static kAXTrustedCheckOptionPrompt: CFTypeRef;
+    fn AXIsProcessTrustedWithOptions(options: CFTypeRef) -> bool;
+}
+
+/// Returns true if this process has Accessibility permission. If `prompt` is true
+/// and permission is not granted, macOS shows the system permission prompt and
+/// adds the app to the Accessibility list — required for CGEventTap to succeed.
+pub fn ensure_accessibility(prompt: bool) -> bool {
+    unsafe {
+        let key = CFString::wrap_under_get_rule(kAXTrustedCheckOptionPrompt as _);
+        let val = CFBoolean::from(prompt);
+        let dict = CFDictionary::from_CFType_pairs(&[(key, val)]);
+        AXIsProcessTrustedWithOptions(dict.as_concrete_TypeRef() as CFTypeRef)
+    }
+}
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum KeyEventKind { Down, Up }

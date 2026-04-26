@@ -13,6 +13,12 @@ const EMBEDDED_CLICK: &[u8] = include_bytes!("../assets/click.ogg");
 pub fn run() {
     env_logger::init();
 
+    // Ask macOS for Accessibility permission. If not granted, this triggers
+    // the system prompt and adds BubbleKeys to System Settings → Privacy →
+    // Accessibility (greyed out until the user toggles it on).
+    let trusted = key_listener::ensure_accessibility(true);
+    log::info!("accessibility trusted at startup: {trusted}");
+
     let engine: Arc<dyn AudioEngine> = Arc::new(
         RodioEngine::new().expect("audio engine init"),
     );
