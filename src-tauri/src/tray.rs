@@ -6,7 +6,7 @@ use std::sync::Arc;
 use tauri::{
     image::Image,
     menu::{MenuBuilder, MenuItemBuilder},
-    tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
+    tray::TrayIconBuilder,
     AppHandle, Manager, WebviewUrl, WebviewWindowBuilder,
 };
 
@@ -15,6 +15,8 @@ const TRAY_ICON: &[u8] = include_bytes!("../icons/tray-icon.png");
 pub fn install(app: &AppHandle) -> tauri::Result<()> {
     let img = Image::from_bytes(TRAY_ICON)?;
     let menu = MenuBuilder::new(app)
+        .item(&MenuItemBuilder::new("🫧 Quick Panel").id("panel").build(app)?)
+        .separator()
         .item(&MenuItemBuilder::new("Open BubbleKeys").id("open").build(app)?)
         .separator()
         .item(&MenuItemBuilder::new("Quit").id("quit").build(app)?)
@@ -24,26 +26,24 @@ pub fn install(app: &AppHandle) -> tauri::Result<()> {
         .icon(img)
         .icon_as_template(true)
         .menu(&menu)
-        .show_menu_on_left_click(false)
-        .on_tray_icon_event(|tray, event| {
-            log::info!("tray event: {:?}", event);
-            if let TrayIconEvent::Click {
-                button: MouseButton::Left,
-                button_state: MouseButtonState::Up,
-                ..
-            } = event
-            {
-                show_dropdown(tray.app_handle()).ok();
-            }
-        })
         .on_menu_event(|app, ev| match ev.id().as_ref() {
+            "panel" => {
+                log::info!("menu event: panel");
+                if let Err(e) = show_dropdown(app) {
+                    log::error!("show_dropdown failed: {e}");
+                }
+            }
             "open" => {
+                log::info!("menu event: open");
                 let _ = app.get_webview_window("main").map(|w| {
                     let _ = w.show();
                     let _ = w.set_focus();
                 });
             }
-            "quit" => app.exit(0),
+            "quit" => {
+                log::info!("menu event: quit");
+                app.exit(0);
+            }
             _ => {}
         })
         .build(app)?;
