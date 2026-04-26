@@ -37,12 +37,18 @@ pub fn set_active_pack(
     id: String,
     active: State<'_, Arc<RwLock<String>>>,
     store: State<'_, Arc<PackStore>>,
+    settings: State<'_, Arc<RwLock<Settings>>>,
 ) -> Result<(), String> {
     if store.get(&id).is_none() {
         return Err(format!("unknown pack: {id}"));
     }
-    *active.write().unwrap() = id;
-    Ok(())
+    *active.write().unwrap() = id.clone();
+    let snapshot = {
+        let mut s = settings.write().unwrap();
+        s.active_pack = id;
+        s.clone()
+    };
+    save_settings(&snapshot).map_err(|e| e.to_string())
 }
 
 #[tauri::command]
@@ -59,14 +65,34 @@ pub fn get_state(
 }
 
 #[tauri::command]
-pub fn set_muted(muted: bool, mute: State<'_, MuteController>) {
+pub fn set_muted(
+    muted: bool,
+    mute: State<'_, MuteController>,
+    settings: State<'_, Arc<RwLock<Settings>>>,
+) -> Result<(), String> {
     mute.set_user_muted(muted);
+    let snapshot = {
+        let mut s = settings.write().unwrap();
+        s.muted = muted;
+        s.clone()
+    };
+    save_settings(&snapshot).map_err(|e| e.to_string())
 }
 
 #[tauri::command]
-pub fn set_volume(volume: f32, store: State<'_, Arc<RwLock<f32>>>) {
+pub fn set_volume(
+    volume: f32,
+    store: State<'_, Arc<RwLock<f32>>>,
+    settings: State<'_, Arc<RwLock<Settings>>>,
+) -> Result<(), String> {
     let v = volume.clamp(0.0, 1.0);
     *store.write().unwrap() = v;
+    let snapshot = {
+        let mut s = settings.write().unwrap();
+        s.volume = v;
+        s.clone()
+    };
+    save_settings(&snapshot).map_err(|e| e.to_string())
 }
 
 #[tauri::command]
