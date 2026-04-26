@@ -33,7 +33,8 @@
     "targets": ["dmg", "app"],
     "category": "Utility",
     "macOS": {
-      "minimumSystemVersion": "14.0"
+      "minimumSystemVersion": "14.0",
+      "infoPlist": "Info.plist"
     }
   }
 }
