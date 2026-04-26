@@ -1,5 +1,6 @@
 pub mod audio_engine;
 pub mod dispatcher;
+pub mod ipc;
 pub mod key_listener;
 pub mod mute_controller;
 pub mod pack_format;
@@ -31,6 +32,13 @@ pub fn run() {
     log::info!("accessibility trusted at startup: {trusted}");
 
     tauri::Builder::default()
+        .invoke_handler(tauri::generate_handler![
+            ipc::list_packs,
+            ipc::set_active_pack,
+            ipc::get_state,
+            ipc::set_muted,
+            ipc::set_volume,
+        ])
         .setup(|app| {
             let resource_dir = app.path().resource_dir().expect("resource_dir");
             let user_dir = user_data_dir();
