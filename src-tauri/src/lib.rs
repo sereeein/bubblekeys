@@ -5,7 +5,6 @@ pub mod key_listener;
 pub mod mute_controller;
 pub mod pack_format;
 pub mod pack_store;
-pub mod tray;
 pub mod settings_store;
 
 use std::path::PathBuf;
@@ -43,8 +42,6 @@ pub fn run() {
             ipc::preview_pack,
             ipc::get_settings,
             ipc::update_settings,
-            ipc::show_main,
-            ipc::quit_app,
         ])
         .setup(|app| {
             let resource_dir = app.path().resource_dir().expect("resource_dir");
@@ -143,7 +140,6 @@ pub fn run() {
             let engine_for_state: Arc<dyn AudioEngine> = engine.clone();
             app.manage(engine_for_state);
 
-            tray::install(app.handle())?;
             Ok(())
         })
         .run(tauri::generate_context!())

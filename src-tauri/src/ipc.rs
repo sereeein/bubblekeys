@@ -2,7 +2,7 @@
 
 use std::sync::{Arc, RwLock};
 use serde::Serialize;
-use tauri::{AppHandle, Manager, State};
+use tauri::State;
 
 use crate::audio_engine::{AudioEngine, PlayCommand};
 use crate::mute_controller::MuteController;
@@ -126,18 +126,4 @@ pub fn update_settings(
     *volume.write().unwrap() = new_settings.volume;
     mute.set_user_muted(new_settings.muted);
     Ok(())
-}
-
-#[tauri::command]
-pub fn show_main(app: AppHandle) -> Result<(), String> {
-    if let Some(w) = app.get_webview_window("main") {
-        w.show().map_err(|e| e.to_string())?;
-        w.set_focus().map_err(|e| e.to_string())?;
-    }
-    Ok(())
-}
-
-#[tauri::command]
-pub fn quit_app(app: AppHandle) {
-    app.exit(0);
 }

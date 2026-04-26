@@ -25,5 +25,3 @@ export interface Settings {
 }
 export const getSettings    = ()                  => invoke<Settings>("get_settings");
 export const updateSettings = (s: Settings)       => invoke<void>("update_settings", { newSettings: s });
-export const showMain       = ()                  => invoke<void>("show_main");
-export const quitApp        = ()                  => invoke<void>("quit_app");

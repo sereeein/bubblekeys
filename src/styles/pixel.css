@@ -122,16 +122,3 @@ html, body {
 .toggle span { width: 28px; height: 12px; background: var(--c-lavender); border: 1px solid var(--c-ink); display: inline-block; position: relative; }
 .toggle input:checked + span { background: var(--c-mint); }
 .toggle input:checked + span::after { content: '✓'; position: absolute; right: 2px; top: -3px; }
-
-/* tray dropdown */
-.tray-body { margin: 0; padding: 8px; background: var(--c-pink); }
-.tray { display: flex; flex-direction: column; gap: 6px; font-size: var(--fz-body); }
-.tray header { display: flex; justify-content: space-between; align-items: center; }
-.tray-label { margin: 4px 0 0; font-size: 10px; color: var(--c-subink); letter-spacing: 1px; }
-.tray-pack-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
-.tray-pack-list li { background: var(--c-white); border: 1px solid var(--c-ink); padding: 4px 6px; cursor: pointer; display: flex; gap: 6px; }
-.tray-pack-list li.active { background: var(--c-mint); font-weight: 900; }
-.tray-vol { display: flex; align-items: center; gap: 6px; }
-.tray-vol input[type="range"] { flex: 1; }
-.tray footer { display: flex; justify-content: space-between; gap: 8px; padding-top: 4px; border-top: 1px solid var(--c-ink); }
-.tray footer a { cursor: pointer; color: var(--c-ink); text-decoration: none; }
