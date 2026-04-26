@@ -40,6 +40,8 @@ pub fn run() {
             ipc::set_muted,
             ipc::set_volume,
             ipc::preview_pack,
+            ipc::get_settings,
+            ipc::update_settings,
         ])
         .setup(|app| {
             let resource_dir = app.path().resource_dir().expect("resource_dir");
@@ -47,17 +49,19 @@ pub fn run() {
             let pack_dir = user_dir.join("packs");
             install_default_packs(&resource_dir, &pack_dir).ok();
 
+            let settings = settings_store::load();
+
             let mut store = PackStore::new();
             store.load_dir(&pack_dir).expect("load packs");
             log::info!("loaded {} packs from {}", store.ids().len(), pack_dir.display());
 
-            let active_id = store.ids().first().expect("at least one pack").clone();
-            log::info!("active pack: {active_id}");
-            let active_pack = Arc::new(RwLock::new(active_id));
+            log::info!("active pack: {}", settings.active_pack);
+            let active_pack = Arc::new(RwLock::new(settings.active_pack.clone()));
 
             let engine = Arc::new(RodioEngine::new().expect("audio engine"));
             log::info!("audio engine ready");
             let mute = MuteController::new();
+            mute.set_user_muted(settings.muted);
             let listener = MacKeyListener::start().expect("key listener init");
             log::info!("key listener thread spawned");
             let rx = listener.events();
@@ -66,7 +70,7 @@ pub fn run() {
             let store = Arc::new(store);
             let store_for_thread = store.clone();
             let active_for_thread = active_pack.clone();
-            let volume: Arc<RwLock<f32>> = Arc::new(RwLock::new(0.65));
+            let volume: Arc<RwLock<f32>> = Arc::new(RwLock::new(settings.volume));
             let volume_for_thread = volume.clone();
 
             thread::Builder::new()
@@ -131,6 +135,8 @@ pub fn run() {
             app.manage(store);
             app.manage(active_pack);
             app.manage(volume);
+            let settings_arc = Arc::new(RwLock::new(settings));
+            app.manage(settings_arc);
             let engine_for_state: Arc<dyn AudioEngine> = engine.clone();
             app.manage(engine_for_state);
             Ok(())

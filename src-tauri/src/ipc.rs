@@ -7,6 +7,7 @@ use tauri::State;
 use crate::audio_engine::{AudioEngine, PlayCommand};
 use crate::mute_controller::MuteController;
 use crate::pack_store::PackStore;
+use crate::settings_store::{save as save_settings, Settings};
 
 #[derive(Serialize, Clone)]
 pub struct PackSummary {
@@ -77,5 +78,26 @@ pub fn preview_pack(
     let pack = store.get(&id).ok_or_else(|| format!("unknown pack: {id}"))?;
     let sample = pack.samples_by_key.values().next().cloned().ok_or("empty pack")?;
     engine.play(PlayCommand { sample, volume: 0.6, pitch_offset: 0.0 });
+    Ok(())
+}
+
+#[tauri::command]
+pub fn get_settings(s: State<'_, Arc<RwLock<Settings>>>) -> Settings {
+    s.read().unwrap().clone()
+}
+
+#[tauri::command]
+pub fn update_settings(
+    new_settings: Settings,
+    s: State<'_, Arc<RwLock<Settings>>>,
+    active: State<'_, Arc<RwLock<String>>>,
+    volume: State<'_, Arc<RwLock<f32>>>,
+    mute: State<'_, MuteController>,
+) -> Result<(), String> {
+    *s.write().unwrap() = new_settings.clone();
+    save_settings(&new_settings).map_err(|e| e.to_string())?;
+    *active.write().unwrap() = new_settings.active_pack;
+    *volume.write().unwrap() = new_settings.volume;
+    mute.set_user_muted(new_settings.muted);
     Ok(())
 }
