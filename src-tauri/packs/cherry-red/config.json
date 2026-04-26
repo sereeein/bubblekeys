@@ -1,0 +1,10 @@
+{
+  "id": "cherry-red",
+  "name": "Cherry Red",
+  "key_define_type": "single",
+  "sound": "sound.ogg",
+  "includes_numpad": true,
+  "license": "CC0-1.0",
+  "author": "BubbleKeys",
+  "tags": ["mechanical", "cherry", "red", "linear", "synth-placeholder"]
+}

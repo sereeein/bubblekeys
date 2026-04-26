@@ -61,6 +61,38 @@ fn decode_samples(dir: &Path, m: &PackManifest) -> Result<HashMap<String, Arc<Ve
     Ok(out)
 }
 
+/// On first launch, copies bundled packs from the app resource dir to the user pack dir.
+/// Subsequent launches no-op.
+pub fn install_default_packs(
+    bundled_resource_dir: &Path,
+    user_pack_dir: &Path,
+) -> std::io::Result<()> {
+    if user_pack_dir.exists() && std::fs::read_dir(user_pack_dir)?.next().is_some() {
+        return Ok(());
+    }
+    std::fs::create_dir_all(user_pack_dir)?;
+    let src = bundled_resource_dir.join("packs");
+    if !src.exists() {
+        log::warn!("bundled packs dir missing: {}", src.display());
+        return Ok(());
+    }
+    copy_dir_recursive(&src, user_pack_dir)
+}
+
+fn copy_dir_recursive(src: &Path, dst: &Path) -> std::io::Result<()> {
+    std::fs::create_dir_all(dst)?;
+    for entry in std::fs::read_dir(src)? {
+        let entry = entry?;
+        let dst_path = dst.join(entry.file_name());
+        if entry.path().is_dir() {
+            copy_dir_recursive(&entry.path(), &dst_path)?;
+        } else {
+            std::fs::copy(entry.path(), dst_path)?;
+        }
+    }
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -72,5 +104,16 @@ mod tests {
         let mut store = PackStore::new();
         store.load_dir(&dir).unwrap();
         assert!(store.ids().contains(&"test-single".to_string()));
+    }
+
+    #[test]
+    fn loads_all_four_default_packs() {
+        let dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("packs");
+        let mut store = PackStore::new();
+        store.load_dir(&dir).expect("load default packs");
+        let ids = store.ids();
+        for expected in ["cherry-blue", "cherry-red", "cherry-brown", "bubbles"] {
+            assert!(ids.contains(&expected.to_string()), "missing pack: {expected}");
+        }
     }
 }

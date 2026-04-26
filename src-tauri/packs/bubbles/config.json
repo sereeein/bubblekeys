@@ -1,0 +1,10 @@
+{
+  "id": "bubbles",
+  "name": "Bubbles",
+  "key_define_type": "single",
+  "sound": "sound.ogg",
+  "includes_numpad": true,
+  "license": "CC-BY-4.0",
+  "author": "BubbleKeys",
+  "tags": ["bubble", "soft", "original"]
+}
