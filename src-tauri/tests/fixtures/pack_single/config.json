@@ -1,0 +1,9 @@
+{
+  "id": "test-single",
+  "name": "Test Single",
+  "key_define_type": "single",
+  "sound": "sound.ogg",
+  "includes_numpad": true,
+  "license": "CC0",
+  "author": "Test"
+}
