@@ -1,6 +1,7 @@
 pub mod audio_engine;
 pub mod key_listener;
 pub mod pack_format;
+pub mod pack_store;
 
 use std::sync::Arc;
 use std::thread;
