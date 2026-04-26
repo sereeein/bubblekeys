@@ -76,10 +76,23 @@ pub fn run() {
 
             #[cfg(debug_assertions)]
             {
-                use tauri::menu::{MenuBuilder, MenuItemBuilder};
+                use tauri::menu::{MenuBuilder, MenuItemBuilder, PredefinedMenuItem, SubmenuBuilder};
                 let cycle = MenuItemBuilder::new("Cycle Pack").id("cycle").accelerator("CmdOrCtrl+1").build(app)?;
-                let toggle = MenuItemBuilder::new("Toggle Mute").id("toggle").accelerator("CmdOrCtrl+M").build(app)?;
-                let menu = MenuBuilder::new(app).item(&cycle).item(&toggle).build()?;
+                // Use Cmd+Shift+M to avoid conflict with macOS's built-in "Minimize Window" (Cmd+M).
+                let toggle = MenuItemBuilder::new("Toggle Mute").id("toggle").accelerator("CmdOrCtrl+Shift+M").build(app)?;
+                // macOS only renders submenus in the menu bar — flat MenuItems at root don't show.
+                // Build an "App" submenu (BubbleKeys name + Quit so the user can exit) and a "Debug" submenu with our items.
+                let app_submenu = SubmenuBuilder::new(app, "BubbleKeys")
+                    .item(&PredefinedMenuItem::quit(app, Some("Quit BubbleKeys"))?)
+                    .build()?;
+                let debug_submenu = SubmenuBuilder::new(app, "Debug")
+                    .item(&cycle)
+                    .item(&toggle)
+                    .build()?;
+                let menu = MenuBuilder::new(app)
+                    .item(&app_submenu)
+                    .item(&debug_submenu)
+                    .build()?;
                 app.set_menu(menu)?;
 
                 let store_handle = store.clone();
