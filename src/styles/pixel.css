@@ -96,3 +96,20 @@ html, body {
   display: flex; align-items: center; justify-content: center; font-size: 28px; }
 .vol-row { display: flex; align-items: center; gap: 8px; font-size: var(--fz-body); }
 .vol-row .pixel-bar { flex: 1; }
+
+.tabs { display: flex; background: var(--c-ink); }
+.tab {
+  flex: 1; background: transparent; color: var(--c-sky);
+  border: 0; padding: 4px 0; font: inherit; letter-spacing: 1px; cursor: pointer;
+  border-right: 1px solid #1a1a3a;
+}
+.tab:last-child { border-right: 0; }
+.tab.active { background: var(--c-mint); color: var(--c-ink); font-weight: 900; }
+
+.pack-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.pack-row { background: var(--c-white); border: 1px solid var(--c-ink); padding: 6px 8px;
+  display: flex; justify-content: space-between; cursor: pointer; }
+.pack-row.sel { background: var(--c-pink); font-weight: 900; }
+.pack-row.sel::before { content: '▶ '; }
+.pack-import { background: var(--c-lavender); border: 2px dashed var(--c-ink);
+  text-align: center; padding: 6px; cursor: pointer; }
