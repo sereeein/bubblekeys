@@ -67,6 +67,7 @@ fn spawn_oneshot(handle: Arc<OutputStreamHandle>, cmd: PlayCommand) {
     };
     sink.append(source);
     sink.detach(); // play asynchronously, dropped when finished
+    log::debug!("audio: played sample (vol={}, pitch={})", cmd.volume, cmd.pitch_offset);
 }
 
 impl AudioEngine for RodioEngine {

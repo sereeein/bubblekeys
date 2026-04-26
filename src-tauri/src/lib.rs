@@ -22,16 +22,21 @@ pub fn run() {
     let engine: Arc<dyn AudioEngine> = Arc::new(
         RodioEngine::new().expect("audio engine init"),
     );
+    log::info!("audio engine ready");
     let listener = MacKeyListener::start().expect("key listener init");
+    log::info!("key listener thread spawned");
     let rx = listener.events();
     let click_bytes = Arc::new(EMBEDDED_CLICK.to_vec());
+    log::info!("embedded click.ogg: {} bytes", click_bytes.len());
 
     // Dispatcher thread: every keydown → click sound at fixed volume.
     let engine_for_thread = engine.clone();
     thread::Builder::new()
         .name("bubblekeys-dispatch".into())
         .spawn(move || {
+            log::info!("dispatcher thread started");
             while let Ok(ev) = rx.recv() {
+                log::info!("event received: keycode={} kind={:?}", ev.keycode, ev.kind);
                 if matches!(ev.kind, key_listener::KeyEventKind::Down) {
                     engine_for_thread.play(PlayCommand {
                         sample: click_bytes.clone(),
@@ -40,6 +45,7 @@ pub fn run() {
                     });
                 }
             }
+            log::warn!("dispatcher thread exiting (channel closed)");
         })
         .expect("dispatcher thread");
 
