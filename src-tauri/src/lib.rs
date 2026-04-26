@@ -5,6 +5,7 @@ pub mod key_listener;
 pub mod mute_controller;
 pub mod pack_format;
 pub mod pack_store;
+pub mod tray;
 pub mod settings_store;
 
 use std::path::PathBuf;
@@ -139,6 +140,8 @@ pub fn run() {
             app.manage(settings_arc);
             let engine_for_state: Arc<dyn AudioEngine> = engine.clone();
             app.manage(engine_for_state);
+
+            tray::install(app.handle())?;
             Ok(())
         })
         .run(tauri::generate_context!())
