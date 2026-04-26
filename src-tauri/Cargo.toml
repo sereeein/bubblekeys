@@ -1,0 +1,22 @@
+[package]
+name = "bubblekeys"
+version = "0.1.0"
+description = "Open-source typing sound effects for macOS"
+authors = ["BubbleKeys contributors"]
+edition = "2021"
+rust-version = "1.79"
+
+[lib]
+name = "bubblekeys_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2.0", features = [] }
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tauri = { version = "2.0", features = ["macos-private-api"] }
+
+[features]
+custom-protocol = ["tauri/custom-protocol"]
