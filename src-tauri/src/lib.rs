@@ -10,7 +10,7 @@ use std::path::PathBuf;
 use std::sync::{Arc, RwLock};
 use std::thread;
 
-use audio_engine::RodioEngine;
+use audio_engine::{AudioEngine, RodioEngine};
 use dispatcher::Dispatcher;
 use key_listener::{KeyListener, MacKeyListener};
 use mute_controller::MuteController;
@@ -38,6 +38,7 @@ pub fn run() {
             ipc::get_state,
             ipc::set_muted,
             ipc::set_volume,
+            ipc::preview_pack,
         ])
         .setup(|app| {
             let resource_dir = app.path().resource_dir().expect("resource_dir");
@@ -129,6 +130,8 @@ pub fn run() {
             app.manage(store);
             app.manage(active_pack);
             app.manage(volume);
+            let engine_for_state: Arc<dyn AudioEngine> = engine.clone();
+            app.manage(engine_for_state);
             Ok(())
         })
         .run(tauri::generate_context!())

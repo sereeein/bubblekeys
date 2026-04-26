@@ -1,4 +1,4 @@
-import { getState, listPacks, setActivePack } from "../lib/ipc";
+import { getState, listPacks, setActivePack, previewPack as ipcPreview } from "../lib/ipc";
 
 export async function renderPacks(host: HTMLElement) {
   const [packs, state] = await Promise.all([listPacks(), getState()]);
@@ -25,10 +25,10 @@ export async function renderPacks(host: HTMLElement) {
 }
 
 let lastPreview = 0;
-async function previewPack(_id: string) {
+async function previewPack(id: string) {
   // Phase 5: throttle hover; actual preview command added in Phase 10 (Mechvibes import).
   const now = Date.now();
   if (now - lastPreview < 200) return;
   lastPreview = now;
-  // TODO Phase 5.5: invoke("preview_pack", { id }) — implemented next task.
+  await ipcPreview(id);
 }

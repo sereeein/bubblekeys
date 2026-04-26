@@ -4,6 +4,7 @@ use std::sync::{Arc, RwLock};
 use serde::Serialize;
 use tauri::State;
 
+use crate::audio_engine::{AudioEngine, PlayCommand};
 use crate::mute_controller::MuteController;
 use crate::pack_store::PackStore;
 
@@ -65,4 +66,16 @@ pub fn set_muted(muted: bool, mute: State<'_, MuteController>) {
 pub fn set_volume(volume: f32, store: State<'_, Arc<RwLock<f32>>>) {
     let v = volume.clamp(0.0, 1.0);
     *store.write().unwrap() = v;
+}
+
+#[tauri::command]
+pub fn preview_pack(
+    id: String,
+    store: State<'_, Arc<PackStore>>,
+    engine: State<'_, Arc<dyn AudioEngine>>,
+) -> Result<(), String> {
+    let pack = store.get(&id).ok_or_else(|| format!("unknown pack: {id}"))?;
+    let sample = pack.samples_by_key.values().next().cloned().ok_or("empty pack")?;
+    engine.play(PlayCommand { sample, volume: 0.6, pitch_offset: 0.0 });
+    Ok(())
 }
