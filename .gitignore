@@ -1,0 +1,28 @@
+# Rust / Tauri
+target/
+src-tauri/target/
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# OS
+.DS_Store
+*.log
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Tauri build outputs
+src-tauri/gen/
+src-tauri/WixTools/
+
+# Local secrets
+.env
+.env.local
+
+# Brainstorming workspace (already in repo for reference)
+# .superpowers/  ← keep for now, remove later
