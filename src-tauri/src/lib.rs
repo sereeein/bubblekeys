@@ -1,59 +1,85 @@
 pub mod audio_engine;
+pub mod dispatcher;
 pub mod key_listener;
 pub mod mute_controller;
 pub mod pack_format;
 pub mod pack_store;
 
-use std::sync::Arc;
+use std::path::PathBuf;
+use std::sync::{Arc, RwLock};
 use std::thread;
 
-use audio_engine::{AudioEngine, PlayCommand, RodioEngine};
+use audio_engine::RodioEngine;
+use dispatcher::Dispatcher;
 use key_listener::{KeyListener, MacKeyListener};
+use mute_controller::MuteController;
+use pack_store::{install_default_packs, PackStore};
+use tauri::Manager;
 
-const EMBEDDED_CLICK: &[u8] = include_bytes!("../assets/click.ogg");
+const APP_SUBDIR: &str = "BubbleKeys";
+
+fn user_data_dir() -> PathBuf {
+    let home = std::env::var("HOME").expect("HOME");
+    PathBuf::from(home).join("Library/Application Support").join(APP_SUBDIR)
+}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     env_logger::init();
 
-    // Ask macOS for Accessibility permission. If not granted, this triggers
-    // the system prompt and adds BubbleKeys to System Settings → Privacy →
-    // Accessibility (greyed out until the user toggles it on).
     let trusted = key_listener::ensure_accessibility(true);
     log::info!("accessibility trusted at startup: {trusted}");
 
-    let engine: Arc<dyn AudioEngine> = Arc::new(
-        RodioEngine::new().expect("audio engine init"),
-    );
-    log::info!("audio engine ready");
-    let listener = MacKeyListener::start().expect("key listener init");
-    log::info!("key listener thread spawned");
-    let rx = listener.events();
-    let click_bytes = Arc::new(EMBEDDED_CLICK.to_vec());
-    log::info!("embedded click.ogg: {} bytes", click_bytes.len());
-
-    // Dispatcher thread: every keydown → click sound at fixed volume.
-    let engine_for_thread = engine.clone();
-    thread::Builder::new()
-        .name("bubblekeys-dispatch".into())
-        .spawn(move || {
-            log::info!("dispatcher thread started");
-            while let Ok(ev) = rx.recv() {
-                log::info!("event received: keycode={} kind={:?}", ev.keycode, ev.kind);
-                if matches!(ev.kind, key_listener::KeyEventKind::Down) {
-                    engine_for_thread.play(PlayCommand {
-                        sample: click_bytes.clone(),
-                        volume: 0.65,
-                        pitch_offset: 0.0,
-                    });
-                }
-            }
-            log::warn!("dispatcher thread exiting (channel closed)");
-        })
-        .expect("dispatcher thread");
-
     tauri::Builder::default()
-        .setup(|_app| Ok(()))
+        .setup(|app| {
+            let resource_dir = app.path().resource_dir().expect("resource_dir");
+            let user_dir = user_data_dir();
+            let pack_dir = user_dir.join("packs");
+            install_default_packs(&resource_dir, &pack_dir).ok();
+
+            let mut store = PackStore::new();
+            store.load_dir(&pack_dir).expect("load packs");
+            log::info!("loaded {} packs from {}", store.ids().len(), pack_dir.display());
+
+            let active_id = store.ids().first().expect("at least one pack").clone();
+            log::info!("active pack: {active_id}");
+            let active_pack = Arc::new(RwLock::new(active_id));
+
+            let engine = Arc::new(RodioEngine::new().expect("audio engine"));
+            log::info!("audio engine ready");
+            let mute = MuteController::new();
+            let listener = MacKeyListener::start().expect("key listener init");
+            log::info!("key listener thread spawned");
+            let rx = listener.events();
+
+            let dispatcher = Dispatcher::new(engine.clone(), mute.clone());
+            let store = Arc::new(store);
+            let store_for_thread = store.clone();
+            let active_for_thread = active_pack.clone();
+            let volume: Arc<RwLock<f32>> = Arc::new(RwLock::new(0.65));
+            let volume_for_thread = volume.clone();
+
+            thread::Builder::new()
+                .name("bubblekeys-dispatch".into())
+                .spawn(move || {
+                    log::info!("dispatcher thread started");
+                    while let Ok(ev) = rx.recv() {
+                        let id = active_for_thread.read().unwrap().clone();
+                        if let Some(pack) = store_for_thread.get(&id) {
+                            let v = *volume_for_thread.read().unwrap();
+                            dispatcher.handle(ev, pack, v, 0.0);
+                        }
+                    }
+                    log::warn!("dispatcher thread exiting (channel closed)");
+                })
+                .expect("dispatcher thread");
+
+            app.manage(mute);
+            app.manage(store);
+            app.manage(active_pack);
+            app.manage(volume);
+            Ok(())
+        })
         .run(tauri::generate_context!())
         .expect("error while running BubbleKeys");
 }
