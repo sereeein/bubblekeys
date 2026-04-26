@@ -74,6 +74,36 @@ pub fn run() {
                 })
                 .expect("dispatcher thread");
 
+            #[cfg(debug_assertions)]
+            {
+                use tauri::menu::{MenuBuilder, MenuItemBuilder};
+                let cycle = MenuItemBuilder::new("Cycle Pack").id("cycle").accelerator("CmdOrCtrl+1").build(app)?;
+                let toggle = MenuItemBuilder::new("Toggle Mute").id("toggle").accelerator("CmdOrCtrl+M").build(app)?;
+                let menu = MenuBuilder::new(app).item(&cycle).item(&toggle).build()?;
+                app.set_menu(menu)?;
+
+                let store_handle = store.clone();
+                let active_handle = active_pack.clone();
+                let mute_handle = mute.clone();
+                app.on_menu_event(move |_app, event| {
+                    match event.id().as_ref() {
+                        "cycle" => {
+                            let ids = store_handle.ids();
+                            let mut active = active_handle.write().unwrap();
+                            let idx = ids.iter().position(|i| i == &*active).unwrap_or(0);
+                            *active = ids[(idx + 1) % ids.len()].clone();
+                            log::info!("cycled to pack: {}", *active);
+                        }
+                        "toggle" => {
+                            let cur = mute_handle.is_muted();
+                            mute_handle.set_user_muted(!cur);
+                            log::info!("mute={}", !cur);
+                        }
+                        _ => {}
+                    }
+                });
+            }
+
             app.manage(mute);
             app.manage(store);
             app.manage(active_pack);
