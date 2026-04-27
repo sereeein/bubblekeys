@@ -131,14 +131,16 @@ html, body {
 .pack-import { background: var(--c-lavender); border: 2px dashed var(--c-ink);
   text-align: center; padding: 6px; cursor: pointer; }
 
-.settings-list { list-style: none; margin: 0; padding: 0; }
+.settings-list { list-style: none; margin: 0; padding: 0; font-size: 11px; }
 .settings-row { display: flex; justify-content: space-between; align-items: center;
-  background: var(--c-white); border: 1px solid var(--c-ink); padding: 4px 8px; margin-bottom: 4px; }
-.set-val, .toggle { font: inherit; background: var(--c-sky); border: 1px solid var(--c-ink); padding: 2px 6px; }
+  background: var(--c-white); border: 1px solid var(--c-ink); padding: 2px 6px; margin-bottom: 2px; min-height: 22px; }
+.set-val, .toggle { font: inherit; background: var(--c-sky); border: 1px solid var(--c-ink); padding: 1px 4px; }
 .toggle input { display: none; }
-.toggle span { width: 28px; height: 12px; background: var(--c-lavender); border: 1px solid var(--c-ink); display: inline-block; position: relative; }
+.toggle span { width: 24px; height: 10px; background: var(--c-lavender); border: 1px solid var(--c-ink); display: inline-block; position: relative; }
 .toggle input:checked + span { background: var(--c-mint); }
-.toggle input:checked + span::after { content: '✓'; position: absolute; right: 2px; top: -3px; }
+.toggle input:checked + span::after { content: '✓'; position: absolute; right: 2px; top: -4px; font-size: 9px; }
+.row-sep { padding: 0 4px; opacity: 0.6; }
+.settings-row .lbl { white-space: nowrap; }
 
 .onboard { display: flex; flex-direction: column; align-items: center; justify-content: center;
   padding: 24px; gap: 14px; height: 100%; text-align: center; }

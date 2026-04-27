@@ -17,8 +17,8 @@ export async function renderSettings(host: HTMLElement) {
         ["zh-TW","繁體中文"], ["ja","日本語"], ["ko","한국어"]
       ]))}
       ${row(t("settings.night_silent"), toggle("night_silent.enabled", s.night_silent.enabled))}
-      ${row(t("settings.night_silent.start"), input("night_silent.start", s.night_silent.start, "time"))}
-      ${row(t("settings.night_silent.end"),   input("night_silent.end",   s.night_silent.end,   "time"))}
+      ${row(t("settings.night_silent.window"),
+         `${input("night_silent.start", s.night_silent.start, "time")}<span class="row-sep">–</span>${input("night_silent.end", s.night_silent.end, "time")}`)}
     </ul>
   `;
 
