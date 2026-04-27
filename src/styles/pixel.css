@@ -122,3 +122,10 @@ html, body {
 .toggle span { width: 28px; height: 12px; background: var(--c-lavender); border: 1px solid var(--c-ink); display: inline-block; position: relative; }
 .toggle input:checked + span { background: var(--c-mint); }
 .toggle input:checked + span::after { content: '✓'; position: absolute; right: 2px; top: -3px; }
+
+.onboard { display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 24px; gap: 14px; height: 100%; text-align: center; }
+.onboard h1 { font-size: 26px; margin: 0; }
+.onboard h2 { font-size: 16px; margin: 0; }
+.onboard .subtitle { color: var(--c-subink); margin: 0; font-size: 11px; letter-spacing: 1px; }
+.onboard p { font-size: 12px; line-height: 1.5; max-width: 250px; }

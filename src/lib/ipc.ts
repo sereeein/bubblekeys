@@ -22,8 +22,10 @@ export interface Settings {
   language: string;
   output_device: string;
   night_silent: { enabled: boolean; start: string; end: string };
+  onboarding_completed: boolean;
 }
 export const getSettings    = ()                  => invoke<Settings>("get_settings");
 export const updateSettings = (s: Settings)       => invoke<void>("update_settings", { newSettings: s });
 export const completeOnboarding = () => invoke<void>("complete_onboarding");
 export const resetOnboarding    = () => invoke<void>("reset_onboarding");
+export const openAccessibilitySettings = () => invoke<void>("open_accessibility_settings");

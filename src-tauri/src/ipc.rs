@@ -141,3 +141,12 @@ pub fn reset_onboarding(s: State<'_, Arc<RwLock<Settings>>>) -> Result<(), Strin
     g.onboarding_completed = false;
     save_settings(&g).map_err(|e| e.to_string())
 }
+
+#[tauri::command]
+pub fn open_accessibility_settings() -> Result<(), String> {
+    std::process::Command::new("open")
+        .arg("x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")
+        .status()
+        .map_err(|e| e.to_string())?;
+    Ok(())
+}
