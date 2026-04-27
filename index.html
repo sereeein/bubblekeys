@@ -8,9 +8,10 @@
   </head>
   <body>
     <div class="pixel-frame" id="frame">
-      <header class="frame-header">
-        <span class="brand">BUBBLEKEYS</span>
+      <header class="frame-header" data-tauri-drag-region>
+        <span class="brand" data-tauri-drag-region>BUBBLEKEYS</span>
         <span class="led" id="led" aria-hidden="true"></span>
+        <button class="frame-close" id="close-btn" aria-label="Close">×</button>
       </header>
       <section class="pixel-screen">
         <nav class="tabs" id="tabs" aria-label="Sections"></nav>

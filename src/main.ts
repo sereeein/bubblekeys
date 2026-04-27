@@ -4,11 +4,13 @@ import { renderSettings } from "./views/settings";
 import { renderAbout } from "./views/about";
 import { createRouter, setRouterRefresh } from "./lib/router";
 import { renderFirstRun } from "./views/first-run";
-import { getSettings } from "./lib/ipc";
+import { getSettings, closeApp } from "./lib/ipc";
 import { detectLocale, setLocale, type Locale } from "./i18n";
 
 const tabs   = document.getElementById("tabs")!;
 const screen = document.getElementById("screen")!;
+
+document.getElementById("close-btn")!.addEventListener("click", () => closeApp().catch(console.error));
 
 function bootMain() {
   const router = createRouter(screen, tabs, {

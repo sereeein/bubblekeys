@@ -65,9 +65,26 @@ html, body {
   gap: var(--space-3);
 }
 .frame-header {
-  display: flex; justify-content: space-between; align-items: center;
+  display: flex; align-items: center; gap: 8px;
   font-weight: 900; letter-spacing: 2px;
+  -webkit-user-select: none;
 }
+.frame-header .brand { flex: 1; }
+.frame-close {
+  background: transparent;
+  border: 2px solid var(--c-ink);
+  color: var(--c-ink);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 900;
+  line-height: 1;
+  width: 18px; height: 18px;
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 0;
+  cursor: pointer;
+}
+.frame-close:hover { background: var(--c-pink); }
+.frame-close:active { transform: translate(1px, 1px); }
 .led {
   width: 10px; height: 10px; border-radius: 50%;
   background: var(--c-mint); box-shadow: 0 0 0 1px var(--c-ink);

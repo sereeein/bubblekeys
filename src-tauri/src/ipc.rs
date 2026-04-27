@@ -186,6 +186,11 @@ pub fn get_app_version() -> &'static str {
 }
 
 #[tauri::command]
+pub fn close_app(app: tauri::AppHandle) {
+    app.exit(0);
+}
+
+#[tauri::command]
 pub async fn import_pack(
     archive_path: String,
     store: State<'_, Arc<RwLock<PackStore>>>,

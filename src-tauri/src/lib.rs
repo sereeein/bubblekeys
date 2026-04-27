@@ -50,6 +50,7 @@ pub fn run() {
             ipc::check_accessibility,
             ipc::open_url,
             ipc::get_app_version,
+            ipc::close_app,
             ipc::import_pack,
         ])
         .setup(|app| {
