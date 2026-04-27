@@ -19,6 +19,12 @@ use mute_controller::MuteController;
 use pack_store::{install_default_packs, PackStore};
 use tauri::Manager;
 
+/// Debug builds (cargo run / `npm run tauri dev`) write to a separate user data dir
+/// so smoke testing during development does not pollute the production install's
+/// settings.json + imported-packs directory.
+#[cfg(debug_assertions)]
+const APP_SUBDIR: &str = "BubbleKeysDev";
+#[cfg(not(debug_assertions))]
 const APP_SUBDIR: &str = "BubbleKeys";
 
 pub fn user_data_dir() -> PathBuf {
@@ -54,6 +60,7 @@ pub fn run() {
             ipc::start_drag,
             ipc::import_pack,
             ipc::delete_pack,
+            ipc::factory_reset,
         ])
         .setup(|app| {
             let resource_dir = app.path().resource_dir().expect("resource_dir");

@@ -201,6 +201,15 @@ pub fn get_app_version() -> &'static str {
 }
 
 #[tauri::command]
+pub fn factory_reset(app: tauri::AppHandle) -> Result<(), String> {
+    let user_dir = crate::user_data_dir();
+    if user_dir.exists() {
+        std::fs::remove_dir_all(&user_dir).map_err(|e| e.to_string())?;
+    }
+    app.restart();
+}
+
+#[tauri::command]
 pub fn close_app(app: tauri::AppHandle) {
     app.exit(0);
 }

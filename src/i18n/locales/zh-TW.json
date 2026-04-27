@@ -38,5 +38,7 @@
   "about.version": "v{version}",
   "about.github": "★ GITHUB ★",
   "about.check_updates": "檢查更新",
-  "about.reset_onboarding": "重設導覽"
+  "about.reset_onboarding": "重設導覽",
+  "about.factory_reset": "原廠重設",
+  "about.factory_reset_confirm": "重設所有設定並刪除已匯入的音色？"
 }

@@ -1,4 +1,5 @@
-import { resetOnboarding, openUrl, getAppVersion } from "../lib/ipc";
+import { resetOnboarding, openUrl, getAppVersion, factoryReset } from "../lib/ipc";
+import { pixelConfirm } from "../lib/modal";
 import { t } from "../i18n";
 
 export async function renderAbout(host: HTMLElement) {
@@ -11,6 +12,7 @@ export async function renderAbout(host: HTMLElement) {
       <button class="pixel-btn" id="github">${t("about.github")}</button>
       <button class="pixel-btn" id="check">${t("about.check_updates")}</button>
       <button class="pixel-btn off" id="reset">${t("about.reset_onboarding")}</button>
+      <button class="pixel-btn off" id="factory">${t("about.factory_reset")}</button>
     </div>`;
 
   host.querySelector<HTMLButtonElement>("#github")!.addEventListener("click", () =>
@@ -20,5 +22,14 @@ export async function renderAbout(host: HTMLElement) {
   host.querySelector<HTMLButtonElement>("#reset")!.addEventListener("click", async () => {
     await resetOnboarding();
     location.reload();
+  });
+  host.querySelector<HTMLButtonElement>("#factory")!.addEventListener("click", async () => {
+    const ok = await pixelConfirm({
+      title: t("about.factory_reset_confirm"),
+      okLabel: t("common.ok"),
+      cancelLabel: t("common.cancel"),
+    });
+    if (!ok) return;
+    await factoryReset();
   });
 }

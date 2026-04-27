@@ -38,5 +38,7 @@
   "about.version": "v{version}",
   "about.github": "★ GITHUB ★",
   "about.check_updates": "업데이트 확인",
-  "about.reset_onboarding": "온보딩 다시 보기"
+  "about.reset_onboarding": "온보딩 다시 보기",
+  "about.factory_reset": "공장 초기화",
+  "about.factory_reset_confirm": "모든 설정과 가져온 팩을 지울까요?"
 }

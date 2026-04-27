@@ -38,5 +38,7 @@
   "about.version": "v{version}",
   "about.github": "★ GITHUB ★",
   "about.check_updates": "CHECK UPDATES",
-  "about.reset_onboarding": "RESET ONBOARDING"
+  "about.reset_onboarding": "RESET ONBOARDING",
+  "about.factory_reset": "FACTORY RESET",
+  "about.factory_reset_confirm": "Wipe all settings and imported packs?"
 }

@@ -38,5 +38,7 @@
   "about.version": "v{version}",
   "about.github": "★ GITHUB ★",
   "about.check_updates": "更新を確認",
-  "about.reset_onboarding": "初回ガイドをやり直す"
+  "about.reset_onboarding": "初回ガイドをやり直す",
+  "about.factory_reset": "工場出荷状態にリセット",
+  "about.factory_reset_confirm": "すべての設定とインポート済みパックを消去しますか？"
 }

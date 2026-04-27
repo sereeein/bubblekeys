@@ -38,5 +38,7 @@
   "about.version": "v{version}",
   "about.github": "★ GITHUB ★",
   "about.check_updates": "检查更新",
-  "about.reset_onboarding": "重置引导"
+  "about.reset_onboarding": "重置引导",
+  "about.factory_reset": "出厂重置",
+  "about.factory_reset_confirm": "重置所有设置并删除已导入的音色？"
 }

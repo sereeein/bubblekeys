@@ -43,6 +43,11 @@ BubbleKeys ships with 4 default packs (cherry-blue, cherry-red, cherry-brown, bu
 
 ## Changelog
 
+### v0.2.1
+
+- **Factory Reset** button on the ABOUT page wipes settings + imported packs and restarts the app — useful if you want a clean re-onboarding experience without manually clearing `~/Library/Application Support/BubbleKeys/`.
+- Debug builds now use `~/Library/Application Support/BubbleKeysDev/` (instead of the production dir), so running `npm run tauri dev` no longer pollutes a production install's settings.
+
 ### v0.2.0
 
 - **Pack management**: imported packs can be deleted from the list (× button). Bundled defaults are protected.
