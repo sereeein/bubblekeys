@@ -191,9 +191,39 @@ pub async fn import_pack(
             .to_string();
         let dst = user_pack_dir.join(stem);
         std::fs::create_dir_all(&dst).map_err(|e| e.to_string())?;
+
+        // Detect whether all entries share a single top-level directory prefix.
+        // Mechvibes packs from the community ship as `pack-name/config.json` etc.;
+        // we strip that prefix so files land directly in `packs/<stem>/`.
+        let strip_prefix = {
+            let mut prefix: Option<String> = None;
+            let mut consistent = true;
+            for i in 0..archive.len() {
+                let entry = archive.by_index(i).map_err(|e| e.to_string())?;
+                let name = entry.name();
+                let first = name.split('/').next().unwrap_or("");
+                if first.is_empty() || !name.contains('/') {
+                    consistent = false;
+                    break;
+                }
+                match &prefix {
+                    None => prefix = Some(first.to_string()),
+                    Some(p) if p == first => {}
+                    Some(_) => { consistent = false; break; }
+                }
+            }
+            if consistent { prefix } else { None }
+        };
+
         for i in 0..archive.len() {
             let mut entry = archive.by_index(i).map_err(|e| e.to_string())?;
-            let outpath = dst.join(entry.mangled_name());
+            let mangled = entry.mangled_name();
+            let relative = match &strip_prefix {
+                Some(prefix) => mangled.strip_prefix(prefix).unwrap_or(&mangled).to_path_buf(),
+                None => mangled,
+            };
+            if relative.as_os_str().is_empty() { continue; }
+            let outpath = dst.join(&relative);
             if entry.is_dir() {
                 std::fs::create_dir_all(&outpath).ok();
                 continue;
