@@ -154,8 +154,12 @@ html, body {
 .onboard .subtitle { color: var(--c-subink); margin: 0; font-size: 11px; letter-spacing: 1px; }
 .onboard p { font-size: 12px; line-height: 1.5; max-width: 250px; }
 
-.about { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 16px; }
-.about .logo { font-size: 36px; }
+.about { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 12px; height: 100%; }
+.about .logo { font-size: 30px; }
+.about h2 { margin: 0; font-size: 14px; letter-spacing: 1px; }
+.about .subtitle { margin: 4px 0 2px; }
+.about-actions { display: flex; gap: 6px; }
+.about-actions .pixel-btn { padding: 0.4em 0.8em; }
 
 .pack-row-actions { display: flex; gap: 6px; align-items: center; }
 .pack-del {

@@ -11,8 +11,10 @@ export async function renderAbout(host: HTMLElement) {
       <p class="subtitle">${t("about.version", { version })} · MIT</p>
       <button class="pixel-btn" id="github">${t("about.github")}</button>
       <button class="pixel-btn" id="check">${t("about.check_updates")}</button>
-      <button class="pixel-btn off" id="reset">${t("about.reset_onboarding")}</button>
-      <button class="pixel-btn off" id="factory">${t("about.factory_reset")}</button>
+      <div class="about-actions">
+        <button class="pixel-btn off" id="reset">${t("about.reset_onboarding")}</button>
+        <button class="pixel-btn off" id="factory">${t("about.factory_reset")}</button>
+      </div>
     </div>`;
 
   host.querySelector<HTMLButtonElement>("#github")!.addEventListener("click", () =>
