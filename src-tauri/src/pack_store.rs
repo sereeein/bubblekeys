@@ -101,34 +101,42 @@ fn decode_multi(dir: &Path, m: &PackManifest) -> Result<PackSamples, PackError> 
     Ok(PackSamples::MultiPcm { rate, channels, slices })
 }
 
-/// On first launch, copies bundled packs from the app resource dir to the user pack dir
-/// and returns the list of bundled pack ids that were installed (so the caller can
-/// mark them as protected from deletion). Subsequent launches no-op and return [].
+/// Always scans the bundled source dir to determine which pack ids are bundled
+/// (independent of whether copy actually happens), so the caller can mark them
+/// protected from deletion on every launch — not just the first.
+///
+/// On first launch only, copies bundled packs from the app resource dir to the
+/// user pack dir. Subsequent launches skip the copy but still return the same
+/// bundled-id list.
 pub fn install_default_packs(
     bundled_resource_dir: &Path,
     user_pack_dir: &Path,
 ) -> std::io::Result<Vec<String>> {
-    if user_pack_dir.exists() && std::fs::read_dir(user_pack_dir)?.next().is_some() {
-        return Ok(vec![]);
-    }
-    std::fs::create_dir_all(user_pack_dir)?;
     let src = bundled_resource_dir.join("packs");
-    if !src.exists() {
-        log::warn!("bundled packs dir missing: {}", src.display());
-        return Ok(vec![]);
-    }
-    copy_dir_recursive(&src, user_pack_dir)?;
 
-    // Scan the freshly-populated user_pack_dir and collect manifest ids.
-    let mut ids = Vec::new();
-    for entry in std::fs::read_dir(user_pack_dir)? {
-        let entry = entry?;
-        if !entry.path().is_dir() { continue; }
-        if let Ok(manifest) = load_manifest(&entry.path()) {
-            ids.push(manifest.id);
+    let bundled_ids = if src.exists() {
+        let mut ids = Vec::new();
+        for entry in std::fs::read_dir(&src)? {
+            let entry = entry?;
+            if !entry.path().is_dir() { continue; }
+            if let Ok(manifest) = load_manifest(&entry.path()) {
+                ids.push(manifest.id);
+            }
         }
+        ids
+    } else {
+        log::warn!("bundled packs dir missing: {}", src.display());
+        Vec::new()
+    };
+
+    let already_populated = user_pack_dir.exists()
+        && std::fs::read_dir(user_pack_dir)?.next().is_some();
+    if !already_populated && src.exists() {
+        std::fs::create_dir_all(user_pack_dir)?;
+        copy_dir_recursive(&src, user_pack_dir)?;
     }
-    Ok(ids)
+
+    Ok(bundled_ids)
 }
 
 pub fn copy_dir_recursive(src: &Path, dst: &Path) -> std::io::Result<()> {

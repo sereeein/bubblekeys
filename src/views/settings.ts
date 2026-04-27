@@ -6,20 +6,22 @@ export async function renderSettings(host: HTMLElement) {
   const s = await getSettings();
 
   host.innerHTML = `
-    <ul class="settings-list">
-      ${row(t("settings.hotkey"), input("hotkey", s.hotkey, "text"))}
-      ${row(t("settings.autostart"), toggle("auto_start", s.auto_start))}
-      ${row(t("settings.pitch_jitter"), toggle("pitch_jitter", s.pitch_jitter))}
-      ${row(t("settings.menu_icon"), toggle("menu_icon_visible", s.menu_icon_visible))}
-      ${row(t("settings.output"), input("output_device", s.output_device, "text"))}
-      ${row(t("settings.language"), select("language", s.language, [
-        ["auto", "Auto"], ["en", "English"], ["zh-CN","简体中文"],
-        ["zh-TW","繁體中文"], ["ja","日本語"], ["ko","한국어"]
-      ]))}
-      ${row(t("settings.night_silent"), toggle("night_silent.enabled", s.night_silent.enabled))}
-      ${row(t("settings.night_silent.window"),
-         `${input("night_silent.start", s.night_silent.start, "time")}<span class="row-sep">–</span>${input("night_silent.end", s.night_silent.end, "time")}`)}
-    </ul>
+    <div class="settings">
+      <ul class="settings-list">
+        ${row(t("settings.hotkey"), input("hotkey", s.hotkey, "text"))}
+        ${row(t("settings.autostart"), toggle("auto_start", s.auto_start))}
+        ${row(t("settings.pitch_jitter"), toggle("pitch_jitter", s.pitch_jitter))}
+        ${row(t("settings.menu_icon"), toggle("menu_icon_visible", s.menu_icon_visible))}
+        ${row(t("settings.output"), input("output_device", s.output_device, "text"))}
+        ${row(t("settings.language"), select("language", s.language, [
+          ["auto", "Auto"], ["en", "English"], ["zh-CN","简体中文"],
+          ["zh-TW","繁體中文"], ["ja","日本語"], ["ko","한국어"]
+        ]))}
+        ${row(t("settings.night_silent"), toggle("night_silent.enabled", s.night_silent.enabled))}
+        ${row(t("settings.night_silent.window"),
+           `${input("night_silent.start", s.night_silent.start, "time")}<span class="row-sep">–</span>${input("night_silent.end", s.night_silent.end, "time")}`)}
+      </ul>
+    </div>
   `;
 
   host.querySelector<HTMLFormElement>(".settings-list")!.addEventListener("change", async (e) => {

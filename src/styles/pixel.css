@@ -131,14 +131,19 @@ html, body {
 .pack-import { background: var(--c-lavender); border: 2px dashed var(--c-ink);
   text-align: center; padding: 6px; cursor: pointer; }
 
-.settings-list { list-style: none; margin: 0; padding: 0; font-size: 11px; }
+.settings { display: flex; flex-direction: column; height: 100%; }
+.settings-list {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-direction: column;
+  flex: 1; justify-content: space-between;
+}
 .settings-row { display: flex; justify-content: space-between; align-items: center;
-  background: var(--c-white); border: 1px solid var(--c-ink); padding: 2px 6px; margin-bottom: 2px; min-height: 22px; }
-.set-val, .toggle { font: inherit; background: var(--c-sky); border: 1px solid var(--c-ink); padding: 1px 4px; }
+  background: var(--c-white); border: 1px solid var(--c-ink); padding: 5px 8px; min-height: 28px; }
+.set-val, .toggle { font: inherit; background: var(--c-sky); border: 1px solid var(--c-ink); padding: 2px 6px; }
 .toggle input { display: none; }
-.toggle span { width: 24px; height: 10px; background: var(--c-lavender); border: 1px solid var(--c-ink); display: inline-block; position: relative; }
+.toggle span { width: 28px; height: 12px; background: var(--c-lavender); border: 1px solid var(--c-ink); display: inline-block; position: relative; }
 .toggle input:checked + span { background: var(--c-mint); }
-.toggle input:checked + span::after { content: '✓'; position: absolute; right: 2px; top: -4px; font-size: 9px; }
+.toggle input:checked + span::after { content: '✓'; position: absolute; right: 2px; top: -3px; }
 .row-sep { padding: 0 4px; opacity: 0.6; }
 .settings-row .lbl { white-space: nowrap; }
 
