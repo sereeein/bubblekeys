@@ -21,8 +21,8 @@ jobs:
           node-version: 20
           cache: npm
 
-      - name: Setup Rust 1.85 (universal targets)
-        uses: dtolnay/rust-toolchain@1.85.0
+      - name: Setup Rust (stable, universal targets)
+        uses: dtolnay/rust-toolchain@stable
         with:
           targets: aarch64-apple-darwin,x86_64-apple-darwin
 
