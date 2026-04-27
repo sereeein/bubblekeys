@@ -7,9 +7,25 @@ use std::thread;
 use crossbeam_channel::{unbounded, Sender};
 use rodio::{Decoder, OutputStream, OutputStreamHandle, Sink, Source};
 
+/// Sample payload variants accepted by the engine.
+///
+/// `Encoded` carries raw OGG/WAV bytes that get decoded on each play
+/// (used for single-sound packs where the whole file is the sample).
+/// `Pcm` carries pre-decoded f32 PCM with rate + channel metadata
+/// (used for sprite-sliced multi packs to avoid re-decoding the whole sprite).
+#[derive(Clone, Debug)]
+pub enum SampleData {
+    Encoded(Arc<Vec<u8>>),
+    Pcm {
+        rate: u32,
+        channels: u16,
+        samples: Arc<Vec<f32>>,
+    },
+}
+
 #[derive(Clone, Debug)]
 pub struct PlayCommand {
-    pub sample: Arc<Vec<u8>>,
+    pub sample: SampleData,
     pub volume: f32,
     pub pitch_offset: f32,
 }
@@ -50,24 +66,34 @@ impl RodioEngine {
 }
 
 fn spawn_oneshot(handle: Arc<OutputStreamHandle>, cmd: PlayCommand) {
-    let cursor = Cursor::new((*cmd.sample).clone());
-    let decoder = match Decoder::new(cursor) {
-        Ok(d) => d,
-        Err(e) => {
-            log::warn!("audio: decode failed: {e}");
-            return;
-        }
-    };
     // Pitch offset via speed change. ±0.5 semitones ≈ ±3% speed.
     let speed = 2f32.powf(cmd.pitch_offset / 12.0);
-    let source = decoder.amplify(cmd.volume).speed(speed);
+    let volume = cmd.volume;
+
+    let source: Box<dyn Source<Item = f32> + Send> = match cmd.sample {
+        SampleData::Encoded(bytes) => {
+            let cursor = Cursor::new((*bytes).clone());
+            match Decoder::new(cursor) {
+                Ok(d) => Box::new(d.convert_samples().amplify(volume).speed(speed)),
+                Err(e) => {
+                    log::warn!("audio: decode failed: {e}");
+                    return;
+                }
+            }
+        }
+        SampleData::Pcm { rate, channels, samples } => {
+            let buf = rodio::buffer::SamplesBuffer::new(channels, rate, (*samples).clone());
+            Box::new(buf.amplify(volume).speed(speed))
+        }
+    };
+
     let sink = match Sink::try_new(&handle) {
         Ok(s) => s,
         Err(e) => { log::warn!("audio: sink: {e}"); return; }
     };
     sink.append(source);
     sink.detach(); // play asynchronously, dropped when finished
-    log::debug!("audio: played sample (vol={}, pitch={})", cmd.volume, cmd.pitch_offset);
+    log::debug!("audio: played sample (vol={}, pitch={})", volume, cmd.pitch_offset);
 }
 
 impl AudioEngine for RodioEngine {
@@ -85,7 +111,7 @@ mod tests {
     #[test]
     fn play_command_constructs_with_zero_pitch() {
         let cmd = PlayCommand {
-            sample: Arc::new(vec![0u8; 100]),
+            sample: SampleData::Encoded(Arc::new(vec![0u8; 100])),
             volume: 0.5,
             pitch_offset: 0.0,
         };

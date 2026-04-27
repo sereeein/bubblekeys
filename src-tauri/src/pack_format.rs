@@ -34,6 +34,7 @@ pub enum PackError {
     #[error("json: {0}")] Json(#[from] serde_json::Error),
     #[error("pack id mismatches directory: '{0}' vs '{1}'")] IdMismatch(String, String),
     #[error("multi pack missing 'defines'")] MultiMissingDefines,
+    #[error("decode: {0}")] Decode(String),
 }
 
 pub fn load_manifest(dir: &Path) -> Result<PackManifest, PackError> {

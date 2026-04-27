@@ -6,11 +6,25 @@ use std::sync::Arc;
 
 use crate::pack_format::{load_manifest, KeyDefineType, PackError, PackManifest};
 
+/// Decoded sample payload for a pack.
+///
+/// `Single` keeps the raw OGG/WAV bytes (decoded on each play).
+/// `MultiPcm` decodes the sprite once and stores per-key f32 PCM slices,
+/// which are fed to the engine as `rodio::buffer::SamplesBuffer`.
+#[derive(Clone, Debug)]
+pub enum PackSamples {
+    Single(Arc<Vec<u8>>),
+    MultiPcm {
+        rate: u32,
+        channels: u16,
+        slices: HashMap<String, Arc<Vec<f32>>>,
+    },
+}
+
 #[derive(Clone, Debug)]
 pub struct LoadedPack {
     pub manifest: PackManifest,
-    /// Single-sound packs: one entry under "*". Multi: one entry per defined keycode (string).
-    pub samples_by_key: HashMap<String, Arc<Vec<u8>>>,
+    pub samples: PackSamples,
 }
 
 #[derive(Default)]
@@ -26,8 +40,8 @@ impl PackStore {
             let entry = entry?;
             if !entry.path().is_dir() { continue; }
             let manifest = load_manifest(&entry.path())?;
-            let samples = decode_samples(&entry.path(), &manifest)?;
-            self.packs.insert(manifest.id.clone(), LoadedPack { manifest, samples_by_key: samples });
+            let samples = decode_pack_samples(&entry.path(), &manifest)?;
+            self.packs.insert(manifest.id.clone(), LoadedPack { manifest, samples });
         }
         Ok(())
     }
@@ -41,24 +55,37 @@ impl PackStore {
     pub fn get(&self, id: &str) -> Option<&LoadedPack> { self.packs.get(id) }
 }
 
-fn decode_samples(dir: &Path, m: &PackManifest) -> Result<HashMap<String, Arc<Vec<u8>>>, PackError> {
-    let mut out = HashMap::new();
-    let sound_path = dir.join(&m.sound);
-    let bytes = Arc::new(std::fs::read(&sound_path)?);
+fn decode_pack_samples(dir: &Path, m: &PackManifest) -> Result<PackSamples, PackError> {
     match m.key_define_type {
         KeyDefineType::Single => {
-            out.insert("*".into(), bytes);
+            let bytes = std::fs::read(dir.join(&m.sound))?;
+            Ok(PackSamples::Single(Arc::new(bytes)))
         }
-        KeyDefineType::Multi => {
-            // v1: store one shared sprite blob; dispatcher slices by offset.
-            // For Phase 3 we treat multi-packs as if every key plays the whole sprite (good enough).
-            // Phase 10 (Mechvibes import) refines this with sprite slicing.
-            for keycode in m.defines.keys() {
-                out.insert(keycode.clone(), bytes.clone());
-            }
-        }
+        KeyDefineType::Multi => decode_multi(dir, m),
     }
-    Ok(out)
+}
+
+fn decode_multi(dir: &Path, m: &PackManifest) -> Result<PackSamples, PackError> {
+    use rodio::Source;
+    let bytes = std::fs::read(dir.join(&m.sound))?;
+    let cursor = std::io::Cursor::new(bytes);
+    let dec = rodio::Decoder::new(cursor).map_err(|e| PackError::Decode(e.to_string()))?;
+    let rate = dec.sample_rate();
+    let channels = dec.channels();
+    let pcm: Vec<f32> = dec.convert_samples().collect();
+
+    let frames_per_ms = (rate as f32 / 1000.0) * channels as f32;
+    let mut slices = HashMap::new();
+    for (key, [offset_ms, dur_ms]) in &m.defines {
+        let start = (*offset_ms as f32 * frames_per_ms) as usize;
+        let len = (*dur_ms as f32 * frames_per_ms) as usize;
+        let end = (start + len).min(pcm.len());
+        if start >= pcm.len() {
+            continue;
+        }
+        slices.insert(key.clone(), Arc::new(pcm[start..end].to_vec()));
+    }
+    Ok(PackSamples::MultiPcm { rate, channels, slices })
 }
 
 /// On first launch, copies bundled packs from the app resource dir to the user pack dir.
@@ -114,6 +141,19 @@ mod tests {
         let ids = store.ids();
         for expected in ["cherry-blue", "cherry-red", "cherry-brown", "bubbles"] {
             assert!(ids.contains(&expected.to_string()), "missing pack: {expected}");
+        }
+    }
+
+    #[test]
+    fn multi_pack_slices_two_keys() {
+        let dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/pack_multi");
+        let m = load_manifest(&dir).unwrap();
+        let samples = decode_pack_samples(&dir, &m).unwrap();
+        if let PackSamples::MultiPcm { slices, .. } = samples {
+            assert!(slices.contains_key("1"));
+            assert!(slices.contains_key("57"));
+        } else {
+            panic!("expected multi");
         }
     }
 }

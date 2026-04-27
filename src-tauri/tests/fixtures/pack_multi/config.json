@@ -1,0 +1,10 @@
+{
+  "id": "test-multi",
+  "name": "Test Multi",
+  "key_define_type": "multi",
+  "sound": "sound.ogg",
+  "defines": {
+    "1": [0, 250],
+    "57": [500, 250]
+  }
+}

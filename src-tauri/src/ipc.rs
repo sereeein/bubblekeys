@@ -4,9 +4,9 @@ use std::sync::{Arc, RwLock};
 use serde::Serialize;
 use tauri::State;
 
-use crate::audio_engine::{AudioEngine, PlayCommand};
+use crate::audio_engine::{AudioEngine, PlayCommand, SampleData};
 use crate::mute_controller::MuteController;
-use crate::pack_store::PackStore;
+use crate::pack_store::{PackSamples, PackStore};
 use crate::settings_store::{save as save_settings, Settings};
 
 #[derive(Serialize, Clone)]
@@ -102,7 +102,17 @@ pub fn preview_pack(
     engine: State<'_, Arc<dyn AudioEngine>>,
 ) -> Result<(), String> {
     let pack = store.get(&id).ok_or_else(|| format!("unknown pack: {id}"))?;
-    let sample = pack.samples_by_key.values().next().cloned().ok_or("empty pack")?;
+    let sample = match &pack.samples {
+        PackSamples::Single(bytes) => SampleData::Encoded(bytes.clone()),
+        PackSamples::MultiPcm { rate, channels, slices } => {
+            let s = slices.values().next().ok_or("empty pack")?;
+            SampleData::Pcm {
+                rate: *rate,
+                channels: *channels,
+                samples: s.clone(),
+            }
+        }
+    };
     engine.play(PlayCommand { sample, volume: 0.6, pitch_offset: 0.0 });
     Ok(())
 }

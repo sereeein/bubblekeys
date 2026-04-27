@@ -2,10 +2,10 @@
 
 use std::sync::Arc;
 
-use crate::audio_engine::{AudioEngine, PlayCommand};
+use crate::audio_engine::{AudioEngine, PlayCommand, SampleData};
 use crate::key_listener::{KeyEvent, KeyEventKind};
 use crate::mute_controller::MuteController;
-use crate::pack_store::LoadedPack;
+use crate::pack_store::{LoadedPack, PackSamples};
 
 pub struct Dispatcher<E: AudioEngine + ?Sized> {
     engine: Arc<E>,
@@ -22,9 +22,18 @@ impl<E: AudioEngine + ?Sized> Dispatcher<E> {
         if self.mute.is_muted() { return; }
 
         let key = ev.keycode.to_string();
-        let sample = pack.samples_by_key.get(&key)
-            .or_else(|| pack.samples_by_key.get("*"))
-            .cloned();
+        let sample = match &pack.samples {
+            PackSamples::Single(bytes) => Some(SampleData::Encoded(bytes.clone())),
+            PackSamples::MultiPcm { rate, channels, slices } => {
+                slices.get(&key)
+                    .or_else(|| slices.values().next()) // fallback: any slice if key not mapped
+                    .map(|s| SampleData::Pcm {
+                        rate: *rate,
+                        channels: *channels,
+                        samples: s.clone(),
+                    })
+            }
+        };
 
         if let Some(sample) = sample {
             self.engine.play(PlayCommand { sample, volume, pitch_offset });
@@ -37,7 +46,6 @@ mod tests {
     use super::*;
     use std::sync::Mutex;
     use crate::pack_format::{KeyDefineType, PackManifest};
-    use std::collections::HashMap;
 
     struct CountingEngine { calls: Mutex<u32> }
     impl AudioEngine for CountingEngine {
@@ -53,9 +61,10 @@ mod tests {
             includes_numpad: true,
             license: None, author: None, icon: None, tags: vec![],
         };
-        let mut s = HashMap::new();
-        s.insert("*".into(), Arc::new(vec![0u8; 4]));
-        LoadedPack { manifest, samples_by_key: s }
+        LoadedPack {
+            manifest,
+            samples: PackSamples::Single(Arc::new(vec![0u8; 4])),
+        }
     }
 
     #[test]
