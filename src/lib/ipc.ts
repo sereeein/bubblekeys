@@ -33,3 +33,4 @@ export const checkAccessibility = () => invoke<boolean>("check_accessibility");
 export const openUrl = (url: string) => invoke<void>("open_url", { url });
 export const getAppVersion = () => invoke<string>("get_app_version");
 export const closeApp = () => invoke<void>("close_app");
+export const startDrag = () => invoke<void>("start_drag");

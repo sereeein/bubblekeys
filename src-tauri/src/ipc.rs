@@ -191,6 +191,11 @@ pub fn close_app(app: tauri::AppHandle) {
 }
 
 #[tauri::command]
+pub fn start_drag(window: tauri::Window) -> Result<(), String> {
+    window.start_dragging().map_err(|e| e.to_string())
+}
+
+#[tauri::command]
 pub async fn import_pack(
     archive_path: String,
     store: State<'_, Arc<RwLock<PackStore>>>,

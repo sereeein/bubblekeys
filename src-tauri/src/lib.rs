@@ -51,6 +51,7 @@ pub fn run() {
             ipc::open_url,
             ipc::get_app_version,
             ipc::close_app,
+            ipc::start_drag,
             ipc::import_pack,
         ])
         .setup(|app| {
