@@ -45,6 +45,7 @@ pub fn run() {
             ipc::complete_onboarding,
             ipc::reset_onboarding,
             ipc::open_accessibility_settings,
+            ipc::check_accessibility,
         ])
         .setup(|app| {
             let resource_dir = app.path().resource_dir().expect("resource_dir");

@@ -29,3 +29,4 @@ export const updateSettings = (s: Settings)       => invoke<void>("update_settin
 export const completeOnboarding = () => invoke<void>("complete_onboarding");
 export const resetOnboarding    = () => invoke<void>("reset_onboarding");
 export const openAccessibilitySettings = () => invoke<void>("open_accessibility_settings");
+export const checkAccessibility = () => invoke<boolean>("check_accessibility");

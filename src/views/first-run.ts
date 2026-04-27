@@ -1,9 +1,10 @@
-import { completeOnboarding, openAccessibilitySettings } from "../lib/ipc";
+import { completeOnboarding, openAccessibilitySettings, checkAccessibility } from "../lib/ipc";
 
 type Step = "welcome" | "why" | "grant" | "try";
 
 export function renderFirstRun(host: HTMLElement, onDone: () => void) {
   let step: Step = "welcome";
+  let pollHandle: number | undefined;
   paint();
 
   function paint() {
@@ -28,8 +29,21 @@ export function renderFirstRun(host: HTMLElement, onDone: () => void) {
       });
     });
 
-    if (step === "try") {
-      // Live keystroke detector via tauri event from backend (added in 8.3).
+    if (pollHandle) {
+      window.clearInterval(pollHandle);
+      pollHandle = undefined;
+    }
+
+    if (step === "grant") {
+      pollHandle = window.setInterval(async () => {
+        const ok = await checkAccessibility();
+        if (ok) {
+          window.clearInterval(pollHandle);
+          pollHandle = undefined;
+          step = "try";
+          paint();
+        }
+      }, 1000);
     }
   }
 }
@@ -52,7 +66,7 @@ const grant = () => `
   <div class="onboard">
     <h2>↑ ENABLE BUBBLEKEYS</h2>
     <p>System Settings → Privacy & Security → Accessibility → toggle BubbleKeys on. We'll auto-advance once granted.</p>
-    <button class="pixel-btn" data-go="try">SKIP DETECT (NEXT)</button>
+    <p class="subtitle"><span id="accessibility-status">⌛ waiting…</span></p>
   </div>`;
 
 const tryIt = () => `

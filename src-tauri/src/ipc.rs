@@ -150,3 +150,8 @@ pub fn open_accessibility_settings() -> Result<(), String> {
         .map_err(|e| e.to_string())?;
     Ok(())
 }
+
+#[tauri::command]
+pub fn check_accessibility() -> bool {
+    crate::key_listener::ensure_accessibility(false)
+}
