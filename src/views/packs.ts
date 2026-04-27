@@ -18,12 +18,21 @@ export async function renderPacks(host: HTMLElement) {
     </ul>`;
 
   host.querySelectorAll<HTMLLIElement>(".pack-row").forEach(li => {
-    li.addEventListener("click", async () => {
-      await setActivePack(li.dataset.id!);
-      host.querySelectorAll(".pack-row").forEach(x => x.classList.remove("sel"));
+    li.addEventListener("click", () => {
+      const id = li.dataset.id!;
+      // Optimistic UI: update highlight + meta marker before backend round-trip.
+      host.querySelectorAll<HTMLLIElement>(".pack-row").forEach(x => {
+        x.classList.remove("sel");
+        const meta = x.querySelector<HTMLSpanElement>(".meta");
+        if (meta) meta.textContent = "";
+      });
       li.classList.add("sel");
+      const meta = li.querySelector<HTMLSpanElement>(".meta");
+      if (meta) meta.textContent = "♪";
+      // Fire-and-forget: settings persist + preview both happen async; UI doesn't wait.
+      setActivePack(id).catch(e => console.error("setActivePack:", e));
+      ipcPreview(id).catch(e => console.error("previewPack:", e));
     });
-    li.addEventListener("mouseenter", () => previewPack(li.dataset.id!));
   });
 
   const importBtn = host.querySelector<HTMLLIElement>("[data-action='import']");
@@ -46,11 +55,3 @@ export async function renderPacks(host: HTMLElement) {
   }
 }
 
-let lastPreview = 0;
-async function previewPack(id: string) {
-  // Phase 5: throttle hover; actual preview command added in Phase 10 (Mechvibes import).
-  const now = Date.now();
-  if (now - lastPreview < 200) return;
-  lastPreview = now;
-  await ipcPreview(id);
-}
