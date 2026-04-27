@@ -32,6 +32,7 @@
     "active": true,
     "targets": ["dmg", "app"],
     "category": "Utility",
+    "icon": ["icons/icon.icns"],
     "resources": ["packs/**/*"],
     "macOS": {
       "minimumSystemVersion": "14.0",

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>html,body{margin:0;padding:0;background:transparent}</style>
+</head>
+<body>
+<!--
+  BubbleKeys app icon master (1024x1024).
+  64-cell grid; each cell renders as 16 actual pixels.
+  Palette: tokens.css
+    sky      #b5c8f5
+    lavender #d4b5f5
+    pink     #f5b5d4
+    mint     #a3e6c5
+    ink      #2d2d5f
+    subink   #5d5d8f
+    white    #ffffff
+  Pink-darkened (for keycap side faces, mixing pink toward ink): #c98ba8
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 64 64" shape-rendering="crispEdges">
+
+  <!-- =========================================================
+       MAIN BUBBLE (upper-right, ~20-cell diameter)
+       Center near (44, 16). Stays clear of keycap (top of cap at y=32).
+       ========================================================= -->
+  <!-- Bubble fill (sky) -->
+  <rect x="38" y="8"  width="12" height="2" fill="#b5c8f5"/>
+  <rect x="36" y="10" width="16" height="2" fill="#b5c8f5"/>
+  <rect x="34" y="12" width="20" height="2" fill="#b5c8f5"/>
+  <rect x="34" y="14" width="20" height="2" fill="#b5c8f5"/>
+  <rect x="34" y="16" width="20" height="2" fill="#b5c8f5"/>
+  <rect x="34" y="18" width="20" height="2" fill="#b5c8f5"/>
+  <rect x="36" y="20" width="16" height="2" fill="#b5c8f5"/>
+  <rect x="38" y="22" width="12" height="2" fill="#b5c8f5"/>
+
+  <!-- Bubble ink outline -->
+  <rect x="38" y="6"  width="12" height="2" fill="#2d2d5f"/>
+  <rect x="36" y="8"  width="2"  height="2" fill="#2d2d5f"/>
+  <rect x="50" y="8"  width="2"  height="2" fill="#2d2d5f"/>
+  <rect x="34" y="10" width="2"  height="2" fill="#2d2d5f"/>
+  <rect x="52" y="10" width="2"  height="2" fill="#2d2d5f"/>
+  <rect x="32" y="12" width="2"  height="6" fill="#2d2d5f"/>
+  <rect x="54" y="12" width="2"  height="6" fill="#2d2d5f"/>
+  <rect x="34" y="18" width="2"  height="2" fill="#2d2d5f"/>
+  <rect x="52" y="18" width="2"  height="2" fill="#2d2d5f"/>
+  <rect x="36" y="20" width="2"  height="2" fill="#2d2d5f"/>
+  <rect x="50" y="20" width="2"  height="2" fill="#2d2d5f"/>
+  <rect x="38" y="22" width="2"  height="2" fill="#2d2d5f"/>
+  <rect x="48" y="22" width="2"  height="2" fill="#2d2d5f"/>
+  <rect x="38" y="24" width="12" height="2" fill="#2d2d5f"/>
+
+  <!-- Bubble white highlight (upper-left interior, classic shorthand) -->
+  <rect x="38" y="10" width="4" height="2" fill="#ffffff"/>
+  <rect x="36" y="12" width="2" height="4" fill="#ffffff"/>
+  <rect x="38" y="12" width="2" height="2" fill="#ffffff"/>
+
+  <!-- =========================================================
+       SMALL BUBBLES
+       ========================================================= -->
+  <!-- Small bubble 1 (lavender) - upper left, 8x6 cells -->
+  <rect x="10" y="8"  width="6" height="2" fill="#2d2d5f"/>
+  <rect x="8"  y="10" width="2" height="4" fill="#2d2d5f"/>
+  <rect x="16" y="10" width="2" height="4" fill="#2d2d5f"/>
+  <rect x="10" y="14" width="6" height="2" fill="#2d2d5f"/>
+  <rect x="10" y="10" width="6" height="4" fill="#d4b5f5"/>
+  <rect x="10" y="10" width="2" height="2" fill="#ffffff"/>
+
+  <!-- Small bubble 2 (mint) - middle left -->
+  <rect x="6"  y="22" width="4" height="2" fill="#2d2d5f"/>
+  <rect x="4"  y="24" width="2" height="2" fill="#2d2d5f"/>
+  <rect x="10" y="24" width="2" height="2" fill="#2d2d5f"/>
+  <rect x="6"  y="26" width="4" height="2" fill="#2d2d5f"/>
+  <rect x="6"  y="24" width="4" height="2" fill="#a3e6c5"/>
+  <rect x="6"  y="24" width="2" height="2" fill="#ffffff"/>
+
+  <!-- Small bubble 3 (white) - upper middle, 4x4 cells -->
+  <rect x="22" y="4"  width="4" height="2" fill="#2d2d5f"/>
+  <rect x="20" y="6"  width="2" height="2" fill="#2d2d5f"/>
+  <rect x="26" y="6"  width="2" height="2" fill="#2d2d5f"/>
+  <rect x="22" y="8"  width="4" height="2" fill="#2d2d5f"/>
+  <rect x="22" y="6"  width="4" height="2" fill="#ffffff"/>
+
+  <!-- =========================================================
+       SPARKLES (★-shaped pixel clusters)
+       ========================================================= -->
+  <!-- Sparkle 1 (mint) - left, between bubble2 and keycap -->
+  <rect x="20" y="22" width="2" height="2" fill="#a3e6c5"/>
+  <rect x="18" y="24" width="2" height="2" fill="#a3e6c5"/>
+  <rect x="20" y="24" width="2" height="2" fill="#ffffff"/>
+  <rect x="22" y="24" width="2" height="2" fill="#a3e6c5"/>
+  <rect x="20" y="26" width="2" height="2" fill="#a3e6c5"/>
+
+  <!-- Sparkle 2 (white) - upper right corner -->
+  <rect x="58" y="4"  width="2" height="2" fill="#a3e6c5"/>
+  <rect x="56" y="6"  width="2" height="2" fill="#a3e6c5"/>
+  <rect x="58" y="6"  width="2" height="2" fill="#ffffff"/>
+  <rect x="60" y="6"  width="2" height="2" fill="#a3e6c5"/>
+  <rect x="58" y="8"  width="2" height="2" fill="#a3e6c5"/>
+
+  <!-- =========================================================
+       3D KEYCAP — proper isometric/oblique projection
+       Top face is a TRAPEZOID (slanted): back edge wider, front edge narrower,
+       so the right side juts out as a parallelogram and the front is below.
+       Layout (cells):
+         Top face back edge:   x=14..50 (36 cells wide), y=30
+         Top face front edge:  x=10..46 (36 cells wide), y=42  (sheared 4 cells left+down)
+         Front face:           x=10..46, y=42..52 (10 tall)
+         Right side face:      sheared parallelogram from (50,30) to (46,42) to (46,52) to (50,40)?
+       We use a stepped parallelogram for the top and the right side.
+       ========================================================= -->
+
+  <!-- Top face (pink): drawn as horizontal strips, each strip shifted 1-cell left as we go down (4 shifts over 12 rows) -->
+  <!-- y=30..32: back row, x=14..50 -->
+  <!-- We shift 1 cell left per 3 rows of vertical, so 4 shifts over 12 rows.
+       Each strip is 2 rows tall. -->
+  <rect x="14" y="30" width="36" height="2" fill="#f5b5d4"/>
+  <rect x="13" y="32" width="36" height="2" fill="#f5b5d4"/>
+  <rect x="12" y="34" width="36" height="2" fill="#f5b5d4"/>
+  <rect x="11" y="36" width="36" height="2" fill="#f5b5d4"/>
+  <rect x="10" y="38" width="36" height="2" fill="#f5b5d4"/>
+  <rect x="10" y="40" width="36" height="2" fill="#f5b5d4"/>
+
+  <!-- Right side face (darker pink): parallelogram from top-right of top face down to front-right -->
+  <!-- The right edge stays at x=50 at top, slanting down to x=46 at front. -->
+  <!-- We draw it as horizontal strips of 4-cell width, shifting left 1 cell every 3 rows. -->
+  <rect x="50" y="30" width="4" height="2" fill="#c98ba8"/>
+  <rect x="49" y="32" width="4" height="2" fill="#c98ba8"/>
+  <rect x="48" y="34" width="4" height="2" fill="#c98ba8"/>
+  <rect x="47" y="36" width="4" height="2" fill="#c98ba8"/>
+  <rect x="46" y="38" width="4" height="2" fill="#c98ba8"/>
+  <rect x="46" y="40" width="4" height="2" fill="#c98ba8"/>
+  <!-- Right side face continues straight down for the front-face height -->
+  <rect x="46" y="42" width="4" height="10" fill="#c98ba8"/>
+
+  <!-- Front face (darker pink, slightly different shade for contrast) -->
+  <rect x="10" y="42" width="36" height="10" fill="#c98ba8"/>
+
+  <!-- Top edge highlight (white) along the back edge of the top face -->
+  <rect x="16" y="30" width="32" height="2" fill="#ffffff"/>
+
+  <!-- Per spec §6.6 fallback: B glyph isn't legible at this resolution
+       so we omit the letter and let the keycap read as a generic key.
+       (A circular indent / tiny dot would be more typical, but the
+       white top-edge highlight already indicates orientation.) -->
+
+  <!-- =========================================================
+       KEYCAP INK OUTLINE (drawn last)
+       Trace the silhouette: back-left corner → back-top → back-right →
+       right side down → front-right → front-bottom → front-left → up.
+       Plus the "horizon" seam between top face and front face.
+       ========================================================= -->
+
+  <!-- Back edge of top face (top-back of cap) -->
+  <rect x="14" y="28" width="36" height="2" fill="#2d2d5f"/>
+  <!-- Right edge of right side face: stairs from (54,30) down to (50,40) then straight to (50,52) -->
+  <rect x="54" y="30" width="2" height="2" fill="#2d2d5f"/>
+  <rect x="53" y="32" width="2" height="2" fill="#2d2d5f"/>
+  <rect x="52" y="34" width="2" height="2" fill="#2d2d5f"/>
+  <rect x="51" y="36" width="2" height="2" fill="#2d2d5f"/>
+  <rect x="50" y="38" width="2" height="2" fill="#2d2d5f"/>
+  <rect x="50" y="40" width="2" height="14" fill="#2d2d5f"/>
+  <!-- Bottom edge of front face -->
+  <rect x="10" y="52" width="40" height="2" fill="#2d2d5f"/>
+  <!-- Left edge: stairs from (14,28) down to (10,40), then straight to (10,52) -->
+  <rect x="12" y="30" width="2" height="2" fill="#2d2d5f"/>
+  <rect x="11" y="32" width="2" height="2" fill="#2d2d5f"/>
+  <rect x="10" y="34" width="2" height="2" fill="#2d2d5f"/>
+  <rect x="9"  y="36" width="2" height="2" fill="#2d2d5f"/>
+  <rect x="8"  y="38" width="2" height="14" fill="#2d2d5f"/>
+  <!-- Seam between top face and front face -->
+  <rect x="10" y="42" width="36" height="2" fill="#2d2d5f"/>
+  <!-- Seam between top face and right side face: stairs from (50,30) to (46,40) -->
+  <rect x="50" y="30" width="2" height="2" fill="#2d2d5f"/>
+  <rect x="49" y="32" width="2" height="2" fill="#2d2d5f"/>
+  <rect x="48" y="34" width="2" height="2" fill="#2d2d5f"/>
+  <rect x="47" y="36" width="2" height="2" fill="#2d2d5f"/>
+  <rect x="46" y="38" width="2" height="2" fill="#2d2d5f"/>
+  <rect x="46" y="40" width="2" height="2" fill="#2d2d5f"/>
+  <!-- Seam between front face and right side face -->
+  <rect x="46" y="44" width="2" height="8" fill="#2d2d5f"/>
+  <!-- Seam corner between front-bottom of top and side -->
+  <rect x="46" y="42" width="4" height="2" fill="#2d2d5f"/>
+
+</svg>
+</body>
+</html>
