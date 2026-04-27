@@ -16,17 +16,23 @@ export async function renderSettings(host: HTMLElement) {
         ["auto", "Auto"], ["en", "English"], ["zh-CN","简体中文"],
         ["zh-TW","繁體中文"], ["ja","日本語"], ["ko","한국어"]
       ]))}
+      ${row(t("settings.night_silent"), toggle("night_silent.enabled", s.night_silent.enabled))}
+      ${row(t("settings.night_silent.start"), input("night_silent.start", s.night_silent.start, "time"))}
+      ${row(t("settings.night_silent.end"),   input("night_silent.end",   s.night_silent.end,   "time"))}
     </ul>
   `;
 
   host.querySelector<HTMLFormElement>(".settings-list")!.addEventListener("change", async (e) => {
     const tgt = e.target as HTMLInputElement | HTMLSelectElement;
     const next: Settings = await getSettings();
-    const key = tgt.dataset.key as keyof Settings;
-    if (tgt.type === "checkbox") (next as any)[key] = (tgt as HTMLInputElement).checked;
-    else (next as any)[key] = tgt.value;
+    const path = tgt.dataset.key!.split(".");
+    let obj: any = next;
+    for (let i = 0; i < path.length - 1; i++) obj = obj[path[i]];
+    const last = path[path.length - 1];
+    if (tgt.type === "checkbox") obj[last] = (tgt as HTMLInputElement).checked;
+    else obj[last] = tgt.value;
     await updateSettings(next);
-    if (key === "language") {
+    if (path[0] === "language") {
       const v = tgt.value;
       setLocale((v === "auto" ? detectLocale() : v) as Locale);
       await refreshActiveTab();
