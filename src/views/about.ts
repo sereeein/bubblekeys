@@ -14,9 +14,9 @@ export async function renderAbout(host: HTMLElement) {
     </div>`;
 
   host.querySelector<HTMLButtonElement>("#github")!.addEventListener("click", () =>
-    openUrl("https://github.com/bubblekeys/bubblekeys"));
+    openUrl("https://github.com/sereeein/bubblekeys"));
   host.querySelector<HTMLButtonElement>("#check")!.addEventListener("click", () =>
-    openUrl("https://github.com/bubblekeys/bubblekeys/releases"));
+    openUrl("https://github.com/sereeein/bubblekeys/releases"));
   host.querySelector<HTMLButtonElement>("#reset")!.addEventListener("click", async () => {
     await resetOnboarding();
     location.reload();
