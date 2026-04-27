@@ -131,18 +131,21 @@
   <rect x="46" y="38" width="4" height="2" fill="#c98ba8"/>
   <rect x="46" y="40" width="4" height="2" fill="#c98ba8"/>
   <!-- Right side face continues straight down for the front-face height -->
-  <rect x="46" y="42" width="4" height="10" fill="#c98ba8"/>
+  <rect x="46" y="42" width="4" height="6" fill="#c98ba8"/>
 
   <!-- Front face (darker pink, slightly different shade for contrast) -->
-  <rect x="10" y="42" width="36" height="10" fill="#c98ba8"/>
+  <rect x="10" y="42" width="36" height="6" fill="#c98ba8"/>
 
-  <!-- Top edge highlight (white) along the back edge of the top face -->
-  <rect x="16" y="30" width="32" height="2" fill="#ffffff"/>
+  <!-- Subtle front-left glint on the keycap face (replaces back-edge highlight which read as cavity wall) -->
+  <rect x="12" y="36" width="4" height="2" fill="#ffffff"/>
 
-  <!-- Per spec §6.6 fallback: B glyph isn't legible at this resolution
-       so we omit the letter and let the keycap read as a generic key.
-       (A circular indent / tiny dot would be more typical, but the
-       white top-edge highlight already indicates orientation.) -->
+  <!-- "B" glyph (8x10 cells, 2-cell strokes) — placed on top of pink fill, before outlines -->
+  <rect x="24" y="32" width="2" height="8" fill="#2d2d5f"/>
+  <rect x="24" y="32" width="6" height="2" fill="#2d2d5f"/>
+  <rect x="30" y="34" width="2" height="2" fill="#2d2d5f"/>
+  <rect x="24" y="36" width="6" height="2" fill="#2d2d5f"/>
+  <rect x="30" y="38" width="2" height="2" fill="#2d2d5f"/>
+  <rect x="24" y="40" width="6" height="2" fill="#2d2d5f"/>
 
   <!-- =========================================================
        KEYCAP INK OUTLINE (drawn last)
@@ -153,32 +156,23 @@
 
   <!-- Back edge of top face (top-back of cap) -->
   <rect x="14" y="28" width="36" height="2" fill="#2d2d5f"/>
-  <!-- Right edge of right side face: stairs from (54,30) down to (50,40) then straight to (50,52) -->
+  <!-- Right edge of right side face: stairs from (54,30) down to (50,40) then straight to (50,48) -->
   <rect x="54" y="30" width="2" height="2" fill="#2d2d5f"/>
   <rect x="53" y="32" width="2" height="2" fill="#2d2d5f"/>
   <rect x="52" y="34" width="2" height="2" fill="#2d2d5f"/>
   <rect x="51" y="36" width="2" height="2" fill="#2d2d5f"/>
   <rect x="50" y="38" width="2" height="2" fill="#2d2d5f"/>
-  <rect x="50" y="40" width="2" height="14" fill="#2d2d5f"/>
+  <rect x="50" y="40" width="2" height="8" fill="#2d2d5f"/>
   <!-- Bottom edge of front face -->
-  <rect x="10" y="52" width="40" height="2" fill="#2d2d5f"/>
-  <!-- Left edge: stairs from (14,28) down to (10,40), then straight to (10,52) -->
+  <rect x="10" y="48" width="40" height="2" fill="#2d2d5f"/>
+  <!-- Left edge: stairs from (14,28) down to (10,38), then straight to (10,48) -->
   <rect x="12" y="30" width="2" height="2" fill="#2d2d5f"/>
   <rect x="11" y="32" width="2" height="2" fill="#2d2d5f"/>
   <rect x="10" y="34" width="2" height="2" fill="#2d2d5f"/>
   <rect x="9"  y="36" width="2" height="2" fill="#2d2d5f"/>
-  <rect x="8"  y="38" width="2" height="14" fill="#2d2d5f"/>
-  <!-- Seam between top face and front face -->
-  <rect x="10" y="42" width="36" height="2" fill="#2d2d5f"/>
-  <!-- Seam between top face and right side face: stairs from (50,30) to (46,40) -->
-  <rect x="50" y="30" width="2" height="2" fill="#2d2d5f"/>
-  <rect x="49" y="32" width="2" height="2" fill="#2d2d5f"/>
-  <rect x="48" y="34" width="2" height="2" fill="#2d2d5f"/>
-  <rect x="47" y="36" width="2" height="2" fill="#2d2d5f"/>
-  <rect x="46" y="38" width="2" height="2" fill="#2d2d5f"/>
-  <rect x="46" y="40" width="2" height="2" fill="#2d2d5f"/>
+  <rect x="8"  y="38" width="2" height="10" fill="#2d2d5f"/>
   <!-- Seam between front face and right side face -->
-  <rect x="46" y="44" width="2" height="8" fill="#2d2d5f"/>
+  <rect x="46" y="44" width="2" height="4" fill="#2d2d5f"/>
   <!-- Seam corner between front-bottom of top and side -->
   <rect x="46" y="42" width="4" height="2" fill="#2d2d5f"/>
 
