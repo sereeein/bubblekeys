@@ -20,7 +20,7 @@ use tauri::Manager;
 
 const APP_SUBDIR: &str = "BubbleKeys";
 
-fn user_data_dir() -> PathBuf {
+pub fn user_data_dir() -> PathBuf {
     let home = std::env::var("HOME").expect("HOME");
     PathBuf::from(home).join("Library/Application Support").join(APP_SUBDIR)
 }
@@ -33,6 +33,7 @@ pub fn run() {
     log::info!("accessibility trusted at startup: {trusted}");
 
     tauri::Builder::default()
+        .plugin(tauri_plugin_dialog::init())
         .invoke_handler(tauri::generate_handler![
             ipc::list_packs,
             ipc::set_active_pack,
@@ -46,6 +47,7 @@ pub fn run() {
             ipc::reset_onboarding,
             ipc::open_accessibility_settings,
             ipc::check_accessibility,
+            ipc::import_pack,
         ])
         .setup(|app| {
             let resource_dir = app.path().resource_dir().expect("resource_dir");
@@ -71,7 +73,7 @@ pub fn run() {
             let rx = listener.events();
 
             let dispatcher = Dispatcher::new(engine.clone(), mute.clone());
-            let store = Arc::new(store);
+            let store = Arc::new(RwLock::new(store));
             let store_for_thread = store.clone();
             let active_for_thread = active_pack.clone();
             let volume: Arc<RwLock<f32>> = Arc::new(RwLock::new(settings.volume));
@@ -83,7 +85,8 @@ pub fn run() {
                     log::info!("dispatcher thread started");
                     while let Ok(ev) = rx.recv() {
                         let id = active_for_thread.read().unwrap().clone();
-                        if let Some(pack) = store_for_thread.get(&id) {
+                        let guard = store_for_thread.read().unwrap();
+                        if let Some(pack) = guard.get(&id) {
                             let v = *volume_for_thread.read().unwrap();
                             dispatcher.handle(ev, pack, v, 0.0);
                         }
@@ -119,7 +122,7 @@ pub fn run() {
                 app.on_menu_event(move |_app, event| {
                     match event.id().as_ref() {
                         "cycle" => {
-                            let ids = store_handle.ids();
+                            let ids = store_handle.read().unwrap().ids();
                             let mut active = active_handle.write().unwrap();
                             let idx = ids.iter().position(|i| i == &*active).unwrap_or(0);
                             *active = ids[(idx + 1) % ids.len()].clone();

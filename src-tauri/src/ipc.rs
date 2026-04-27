@@ -6,7 +6,7 @@ use tauri::State;
 
 use crate::audio_engine::{AudioEngine, PlayCommand, SampleData};
 use crate::mute_controller::MuteController;
-use crate::pack_store::{PackSamples, PackStore};
+use crate::pack_store::{copy_dir_recursive, PackSamples, PackStore};
 use crate::settings_store::{save as save_settings, Settings};
 
 #[derive(Serialize, Clone)]
@@ -23,7 +23,8 @@ pub struct AppState {
 }
 
 #[tauri::command]
-pub fn list_packs(store: State<'_, Arc<PackStore>>) -> Vec<PackSummary> {
+pub fn list_packs(store: State<'_, Arc<RwLock<PackStore>>>) -> Vec<PackSummary> {
+    let store = store.read().unwrap();
     store.ids().into_iter()
         .filter_map(|id| store.get(&id).map(|p| PackSummary {
             id: p.manifest.id.clone(),
@@ -36,10 +37,10 @@ pub fn list_packs(store: State<'_, Arc<PackStore>>) -> Vec<PackSummary> {
 pub fn set_active_pack(
     id: String,
     active: State<'_, Arc<RwLock<String>>>,
-    store: State<'_, Arc<PackStore>>,
+    store: State<'_, Arc<RwLock<PackStore>>>,
     settings: State<'_, Arc<RwLock<Settings>>>,
 ) -> Result<(), String> {
-    if store.get(&id).is_none() {
+    if store.read().unwrap().get(&id).is_none() {
         return Err(format!("unknown pack: {id}"));
     }
     *active.write().unwrap() = id.clone();
@@ -98,10 +99,11 @@ pub fn set_volume(
 #[tauri::command]
 pub fn preview_pack(
     id: String,
-    store: State<'_, Arc<PackStore>>,
+    store: State<'_, Arc<RwLock<PackStore>>>,
     engine: State<'_, Arc<dyn AudioEngine>>,
 ) -> Result<(), String> {
-    let pack = store.get(&id).ok_or_else(|| format!("unknown pack: {id}"))?;
+    let store_guard = store.read().unwrap();
+    let pack = store_guard.get(&id).ok_or_else(|| format!("unknown pack: {id}"))?;
     let sample = match &pack.samples {
         PackSamples::Single(bytes) => SampleData::Encoded(bytes.clone()),
         PackSamples::MultiPcm { rate, channels, slices } => {
@@ -164,4 +166,52 @@ pub fn open_accessibility_settings() -> Result<(), String> {
 #[tauri::command]
 pub fn check_accessibility() -> bool {
     crate::key_listener::ensure_accessibility(false)
+}
+
+#[tauri::command]
+pub async fn import_pack(
+    archive_path: String,
+    store: State<'_, Arc<RwLock<PackStore>>>,
+) -> Result<String, String> {
+    let path = std::path::Path::new(&archive_path);
+    let user_pack_dir = crate::user_data_dir().join("packs");
+    std::fs::create_dir_all(&user_pack_dir).map_err(|e| e.to_string())?;
+
+    if path.is_dir() {
+        let name = path.file_name().ok_or("invalid path")?;
+        let dst = user_pack_dir.join(name);
+        copy_dir_recursive(path, &dst).map_err(|e| e.to_string())?;
+    } else if path.extension().map(|e| e == "zip").unwrap_or(false) {
+        let file = std::fs::File::open(path).map_err(|e| e.to_string())?;
+        let mut archive = zip::ZipArchive::new(file).map_err(|e| e.to_string())?;
+        let stem = path
+            .file_stem()
+            .ok_or("invalid file")?
+            .to_string_lossy()
+            .to_string();
+        let dst = user_pack_dir.join(stem);
+        std::fs::create_dir_all(&dst).map_err(|e| e.to_string())?;
+        for i in 0..archive.len() {
+            let mut entry = archive.by_index(i).map_err(|e| e.to_string())?;
+            let outpath = dst.join(entry.mangled_name());
+            if entry.is_dir() {
+                std::fs::create_dir_all(&outpath).ok();
+                continue;
+            }
+            if let Some(p) = outpath.parent() {
+                std::fs::create_dir_all(p).ok();
+            }
+            let mut f = std::fs::File::create(&outpath).map_err(|e| e.to_string())?;
+            std::io::copy(&mut entry, &mut f).map_err(|e| e.to_string())?;
+        }
+    } else {
+        return Err("unsupported file (need .zip or directory)".into());
+    }
+
+    store
+        .write()
+        .unwrap()
+        .load_dir(&user_pack_dir)
+        .map_err(|e| e.to_string())?;
+    Ok("imported".into())
 }

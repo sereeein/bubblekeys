@@ -1,3 +1,5 @@
+import { open } from "@tauri-apps/plugin-dialog";
+import { invoke } from "@tauri-apps/api/core";
 import { getState, listPacks, setActivePack, previewPack as ipcPreview } from "../lib/ipc";
 import { t } from "../i18n";
 
@@ -23,6 +25,25 @@ export async function renderPacks(host: HTMLElement) {
     });
     li.addEventListener("mouseenter", () => previewPack(li.dataset.id!));
   });
+
+  const importBtn = host.querySelector<HTMLLIElement>("[data-action='import']");
+  if (importBtn) {
+    importBtn.addEventListener("click", async () => {
+      const path = await open({
+        filters: [{ name: "Mechvibes pack", extensions: ["zip"] }],
+        multiple: false,
+        directory: false,
+      });
+      if (!path || typeof path !== "string") return;
+      try {
+        await invoke("import_pack", { archivePath: path });
+        await renderPacks(host);
+      } catch (e) {
+        console.error("import failed:", e);
+        alert(`Import failed: ${e}`);
+      }
+    });
+  }
 }
 
 let lastPreview = 0;
