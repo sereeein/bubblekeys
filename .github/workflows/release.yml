@@ -47,18 +47,25 @@ jobs:
       # interprets `APPLE_CERTIFICATE=""` as "try to sign" rather than
       # "skip signing", causing `security import` to fail on the empty
       # blob. Re-add the env block once real secrets exist.
-      - name: Build universal .dmg (unsigned)
-        run: npm run tauri -- build --target universal-apple-darwin
+      #
+      # Bundle target = `app` only (no `dmg`). bundle_dmg.sh requires
+      # osascript/Finder GUI operations that fail on headless GitHub
+      # runners; we ship the .app inside a .zip instead, which is
+      # standard for unsigned OSS macOS apps and works with Homebrew Cask.
+      - name: Build universal .app (unsigned)
+        run: npm run tauri -- build --target universal-apple-darwin --bundles app
 
-      - name: Compute SHA256 sums
-        working-directory: src-tauri/target/universal-apple-darwin/release/bundle/dmg
-        run: shasum -a 256 *.dmg > SHA256SUMS
+      - name: Pack .app into a universal .zip
+        working-directory: src-tauri/target/universal-apple-darwin/release/bundle/macos
+        run: |
+          ditto -c -k --sequesterRsrc --keepParent BubbleKeys.app BubbleKeys_${{ github.ref_name }}_universal.zip
+          shasum -a 256 BubbleKeys_${{ github.ref_name }}_universal.zip > SHA256SUMS
 
       - name: Create draft release
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
-            src-tauri/target/universal-apple-darwin/release/bundle/dmg/SHA256SUMS
+            src-tauri/target/universal-apple-darwin/release/bundle/macos/BubbleKeys_*_universal.zip
+            src-tauri/target/universal-apple-darwin/release/bundle/macos/SHA256SUMS
           draft: true
           generate_release_notes: true
