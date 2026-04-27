@@ -1,6 +1,8 @@
 import { t as tt } from "../i18n";
 
 export type TabId = "home" | "packs" | "settings" | "about";
+export type ViewCleanup = () => void;
+export type ViewFn = (host: HTMLElement) => Promise<ViewCleanup | void>;
 
 const tabs: TabId[] = ["home", "packs", "settings", "about"];
 
@@ -18,9 +20,10 @@ export async function refreshActiveTab() { await _refresh(); }
 export function createRouter(
   hostScreen: HTMLElement,
   hostTabs: HTMLElement,
-  views: Record<TabId, (host: HTMLElement) => Promise<void>>,
+  views: Record<TabId, ViewFn>,
 ): RouterApi {
   let active: TabId = "home";
+  let currentCleanup: ViewCleanup | null = null;
 
   function paintTabs() {
     hostTabs.innerHTML = tabs.map(t => `
@@ -32,14 +35,19 @@ export function createRouter(
   }
 
   async function activate(tab: TabId) {
+    if (currentCleanup) { currentCleanup(); currentCleanup = null; }
     active = tab;
     paintTabs();
     hostScreen.innerHTML = "";
-    await views[tab](hostScreen);
+    const result = await views[tab](hostScreen);
+    if (typeof result === "function") currentCleanup = result;
   }
 
   paintTabs();
-  views[active](hostScreen);
+  void (async () => {
+    const result = await views[active](hostScreen);
+    if (typeof result === "function") currentCleanup = result;
+  })();
 
   document.addEventListener("keydown", (e) => {
     if (e.key === "ArrowRight" && (e.metaKey || e.ctrlKey)) next();

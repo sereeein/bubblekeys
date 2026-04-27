@@ -10,6 +10,7 @@
   "packs.import": "+ 导入 MECHVIBES",
   "packs.delete_confirm": "确认删除「{name}」？",
   "packs.name_prompt": "音色名称",
+  "packs.page": "{n}/{total}",
   "common.ok": "确定",
   "common.cancel": "取消",
   "settings.hotkey": "快捷键",

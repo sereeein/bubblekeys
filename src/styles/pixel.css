@@ -173,3 +173,10 @@ html, body {
 .modal-box h3 { margin: 0; font-size: 12px; letter-spacing: 1px; }
 .modal-input { font: inherit; padding: 4px 6px; }
 .modal-btns { display: flex; gap: 8px; justify-content: flex-end; }
+
+.pack-pager {
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px; margin-bottom: 6px; font-size: 11px;
+}
+.pack-pager button { padding: 1px 8px; font-size: 11px; }
+.pack-pager button[disabled] { opacity: 0.3; cursor: default; }

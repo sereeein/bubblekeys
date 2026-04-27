@@ -10,6 +10,7 @@
   "packs.import": "+ MECHVIBES をインポート",
   "packs.delete_confirm": "「{name}」を削除しますか？",
   "packs.name_prompt": "パック名",
+  "packs.page": "{n}/{total}",
   "common.ok": "OK",
   "common.cancel": "キャンセル",
   "settings.hotkey": "ホットキー",
