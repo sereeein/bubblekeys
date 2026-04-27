@@ -52,20 +52,32 @@ pub struct MacKeyListener {
 
 impl MacKeyListener {
     /// Spawns a thread running the event tap on its own CFRunLoop.
-    /// Returns Err only if Accessibility permission is missing AND the OS refuses to create the tap.
+    /// Returns Err if CGEventTap creation fails (typically when Accessibility
+    /// permission has not been granted to this binary). Caller should retry.
     pub fn start() -> Result<Self, String> {
         let (tx, rx) = unbounded::<KeyEvent>();
+        // Sync channel of capacity 0 means the sender blocks until receiver
+        // accepts — a one-shot handshake that guarantees we know the
+        // CGEventTap creation result before start() returns.
+        let (init_tx, init_rx) = std::sync::mpsc::sync_channel::<Result<(), String>>(0);
 
         thread::Builder::new()
             .name("bubblekeys-keys".into())
-            .spawn(move || run_tap(tx))
+            .spawn(move || run_tap(tx, init_tx))
             .map_err(|e| format!("spawn key thread: {e}"))?;
 
-        Ok(Self { rx })
+        match init_rx.recv_timeout(std::time::Duration::from_secs(5)) {
+            Ok(Ok(())) => Ok(Self { rx }),
+            Ok(Err(e)) => Err(e),
+            Err(e) => Err(format!("listener init handshake timeout: {e}")),
+        }
     }
 }
 
-fn run_tap(tx: Sender<KeyEvent>) {
+fn run_tap(
+    tx: Sender<KeyEvent>,
+    init_tx: std::sync::mpsc::SyncSender<Result<(), String>>,
+) {
     let events = vec![CGEventType::KeyDown, CGEventType::KeyUp];
     let tap = match CGEventTap::new(
         CGEventTapLocation::HID,
@@ -87,10 +99,14 @@ fn run_tap(tx: Sender<KeyEvent>) {
     ) {
         Ok(t) => t,
         Err(()) => {
-            log::error!("key listener: failed to create event tap (Accessibility permission missing?)");
+            let _ = init_tx.send(Err(
+                "CGEventTap creation failed (Accessibility permission missing or revoked)".into(),
+            ));
             return;
         }
     };
+
+    let _ = init_tx.send(Ok(()));
 
     unsafe {
         let loop_source = tap.mach_port.create_runloop_source(0).expect("loop source");

@@ -73,9 +73,6 @@ pub fn run() {
             log::info!("audio engine ready");
             let mute = MuteController::new();
             mute.set_user_muted(settings.muted);
-            let listener = MacKeyListener::start().expect("key listener init");
-            log::info!("key listener thread spawned");
-            let rx = listener.events();
 
             let dispatcher = Dispatcher::new(engine.clone(), mute.clone());
             let store = Arc::new(RwLock::new(store));
@@ -84,10 +81,30 @@ pub fn run() {
             let volume: Arc<RwLock<f32>> = Arc::new(RwLock::new(settings.volume));
             let volume_for_thread = volume.clone();
 
+            // Retry-init pattern: CGEventTap creation fails silently when
+            // Accessibility is not granted. Rather than blocking app startup,
+            // we spawn a single thread that retries every 2s until trust is
+            // granted, then runs the dispatcher loop. This means typing
+            // produces sound within 2s of the user granting permission, with
+            // no app restart required.
             thread::Builder::new()
                 .name("bubblekeys-dispatch".into())
                 .spawn(move || {
-                    log::info!("dispatcher thread started");
+                    log::info!("dispatcher thread started, waiting for key listener init");
+                    let listener = loop {
+                        match MacKeyListener::start() {
+                            Ok(l) => {
+                                log::info!("key listener init succeeded");
+                                break l;
+                            }
+                            Err(e) => {
+                                log::warn!("key listener init failed ({e}), retry in 2s");
+                                std::thread::sleep(std::time::Duration::from_secs(2));
+                            }
+                        }
+                    };
+                    let rx = listener.events();
+                    log::info!("dispatcher receiving events");
                     while let Ok(ev) = rx.recv() {
                         let id = active_for_thread.read().unwrap().clone();
                         let guard = store_for_thread.read().unwrap();
