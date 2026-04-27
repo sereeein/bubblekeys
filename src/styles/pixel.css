@@ -151,3 +151,25 @@ html, body {
 
 .about { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 16px; }
 .about .logo { font-size: 36px; }
+
+.pack-row-actions { display: flex; gap: 6px; align-items: center; }
+.pack-del {
+  background: var(--c-pink); border: 1px solid var(--c-ink);
+  width: 16px; height: 16px; cursor: pointer; padding: 0; line-height: 1;
+  font: inherit; font-size: 10px; color: var(--c-ink);
+}
+.pack-del:hover { background: #f59ec2; }
+
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(45, 45, 95, 0.6);
+  display: flex; align-items: center; justify-content: center; z-index: 1000;
+}
+.modal-box {
+  background: var(--c-white); border: 3px solid var(--c-ink);
+  padding: 12px; min-width: 240px; max-width: 280px;
+  display: flex; flex-direction: column; gap: 8px;
+  box-shadow: var(--pixel-shadow-md);
+}
+.modal-box h3 { margin: 0; font-size: 12px; letter-spacing: 1px; }
+.modal-input { font: inherit; padding: 4px 6px; }
+.modal-btns { display: flex; gap: 8px; justify-content: flex-end; }

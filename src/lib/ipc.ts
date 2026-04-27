@@ -9,6 +9,9 @@ export const getState       = ()                  => invoke<AppState>("get_state
 export const setMuted       = (muted: boolean)    => invoke<void>("set_muted", { muted });
 export const setVolume      = (volume: number)    => invoke<void>("set_volume", { volume });
 export const previewPack    = (id: string)        => invoke<void>("preview_pack", { id });
+export const deletePack     = (id: string)        => invoke<void>("delete_pack", { id });
+export const importPack     = (archivePath: string, customName: string | null) =>
+  invoke<string>("import_pack", { archivePath, customName });
 
 export interface Settings {
   version: number;
