@@ -30,7 +30,7 @@ BubbleKeys needs **Accessibility permission** to listen for keystrokes. The onbo
 
 ## Build from source
 
-Prerequisites: macOS 14+, Node.js 20+, Rust 1.79+ (`rustup install 1.79`), Xcode Command Line Tools.
+Prerequisites: macOS 14+, Node.js 20+, Rust 1.85+ (`rustup install 1.85`), Xcode Command Line Tools.
 
 ```bash
 npm install
