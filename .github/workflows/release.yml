@@ -47,25 +47,44 @@ jobs:
       # interprets `APPLE_CERTIFICATE=""` as "try to sign" rather than
       # "skip signing", causing `security import` to fail on the empty
       # blob. Re-add the env block once real secrets exist.
-      #
-      # Bundle target = `app` only (no `dmg`). bundle_dmg.sh requires
-      # osascript/Finder GUI operations that fail on headless GitHub
-      # runners; we ship the .app inside a .zip instead, which is
-      # standard for unsigned OSS macOS apps and works with Homebrew Cask.
-      - name: Build universal .app (unsigned)
-        run: npm run tauri -- build --target universal-apple-darwin --bundles app
-
-      - name: Pack .app into a universal .zip
-        working-directory: src-tauri/target/universal-apple-darwin/release/bundle/macos
+      - name: Build universal .dmg (unsigned, verbose)
         run: |
-          ditto -c -k --sequesterRsrc --keepParent BubbleKeys.app BubbleKeys_${{ github.ref_name }}_universal.zip
-          shasum -a 256 BubbleKeys_${{ github.ref_name }}_universal.zip > SHA256SUMS
+          set -o pipefail
+          npm run tauri -- build --target universal-apple-darwin --verbose 2>&1 | tee /tmp/tauri-build.log
+
+      - name: Diagnose bundle_dmg.sh failure
+        if: failure()
+        run: |
+          set +e
+          echo "::group::bundle_dmg.sh location"
+          SCRIPT=$(find src-tauri/target -name "bundle_dmg.sh" 2>/dev/null | head -1)
+          echo "found at: ${SCRIPT:-(not found)}"
+          echo "::endgroup::"
+          if [ -n "$SCRIPT" ]; then
+            echo "::group::bundle_dmg.sh contents"
+            cat "$SCRIPT"
+            echo "::endgroup::"
+            echo "::group::bundle directory listing"
+            ls -la "$(dirname "$SCRIPT")"
+            echo "::endgroup::"
+            echo "::group::Re-run bundle_dmg.sh with bash -x"
+            cd "$(dirname "$SCRIPT")"
+            bash -x "$SCRIPT" 2>&1 | tail -100
+            echo "::endgroup::"
+          fi
+          echo "::group::tail of tauri build log"
+          tail -150 /tmp/tauri-build.log 2>/dev/null || echo "no log captured"
+          echo "::endgroup::"
+
+      - name: Compute SHA256 sums
+        working-directory: src-tauri/target/universal-apple-darwin/release/bundle/dmg
+        run: shasum -a 256 *.dmg > SHA256SUMS
 
       - name: Create draft release
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            src-tauri/target/universal-apple-darwin/release/bundle/macos/BubbleKeys_*_universal.zip
-            src-tauri/target/universal-apple-darwin/release/bundle/macos/SHA256SUMS
+            src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
+            src-tauri/target/universal-apple-darwin/release/bundle/dmg/SHA256SUMS
           draft: true
           generate_release_notes: true

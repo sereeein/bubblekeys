@@ -16,12 +16,9 @@ brew install --cask bubblekeys
 
 ### Direct download
 
-Grab the latest `.zip` from [Releases](https://github.com/sereeein/bubblekeys/releases). Unzip and drag `BubbleKeys.app` into `/Applications`.
+Grab the latest `.dmg` from [Releases](https://github.com/sereeein/bubblekeys/releases).
 
-Because the build is unsigned, macOS will likely complain that *"BubbleKeys can't be opened because it is from an unidentified developer"* on first launch. Two ways to bypass:
-
-1. Control-click `BubbleKeys.app` → **Open**, then click **Open** in the dialog.
-2. From Terminal:
+If macOS reports *"BubbleKeys can't be opened because it is from an unidentified developer"*, the build was unsigned — control-click the app → **Open**, then click **Open** in the dialog. Or, from Terminal:
 
 ```bash
 xattr -dr com.apple.quarantine /Applications/BubbleKeys.app
