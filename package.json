@@ -1,7 +1,7 @@
 {
   "name": "bubblekeys",
   "private": true,
-  "version": "0.2.1",
+  "version": "0.2.2",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "tauri": "tauri",
     "verify:i18n": "tsx scripts/verify-i18n-keys.ts",
-    "icons": "tsx scripts/render-icons.ts && bash scripts/make-icons.sh"
+    "icons": "tsx scripts/render-icons.ts && bash scripts/make-icons.sh",
+    "synth:packs": "python3 scripts/synth-packs.py"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.0.0",

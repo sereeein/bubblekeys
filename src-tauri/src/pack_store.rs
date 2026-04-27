@@ -167,12 +167,22 @@ mod tests {
     }
 
     #[test]
-    fn loads_all_four_default_packs() {
+    fn loads_all_default_packs() {
         let dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("packs");
         let mut store = PackStore::new();
         store.load_dir(&dir).expect("load default packs");
         let ids = store.ids();
-        for expected in ["cherry-blue", "cherry-red", "cherry-brown", "bubbles"] {
+        for expected in [
+            "bubbles",
+            "cherry-red",
+            "cherry-blue",
+            "cherry-brown",
+            "cherry-black",
+            "cherry-silver",
+            "cherry-red-silent",
+            "cherry-purple",
+            "cherry-white",
+        ] {
             assert!(ids.contains(&expected.to_string()), "missing pack: {expected}");
         }
     }

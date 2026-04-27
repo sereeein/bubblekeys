@@ -39,9 +39,14 @@ npm run tauri dev
 
 ## Sound packs
 
-BubbleKeys ships with 4 default packs (cherry-blue, cherry-red, cherry-brown, bubbles). Import additional packs via **PACKS → + IMPORT MECHVIBES** — the importer accepts any [Mechvibes](https://mechvibes.com/sound-packs/)-format `.zip` (or unpacked directory). You can rename a pack on import and delete imported packs anytime; the bundled defaults are protected.
+BubbleKeys ships with 9 default packs covering the major mechanical-switch families: linear (`cherry-red`, `cherry-black`, `cherry-silver`, `cherry-red-silent`), tactile (`cherry-brown`, `cherry-purple`), clicky (`cherry-blue`, `cherry-white`), plus the original `bubbles` pack. Import additional packs via **PACKS → + IMPORT MECHVIBES** (on the last page of the list) — the importer accepts any [Mechvibes](https://mechvibes.com/sound-packs/)-format `.zip` (or unpacked directory). You can rename a pack on import and delete imported packs anytime; the bundled defaults are protected.
 
 ## Changelog
+
+### v0.2.2
+
+- **5 new bundled packs** covering the rest of the mainstream mechanical-switch lineup: Cherry Black (linear, heavy), Cherry Silver (linear, speed), Cherry Red Silent (linear with silicone dampener), Cherry Purple (tactile, more pronounced than brown), and Cherry White (clicky, lighter than blue).
+- Normalized tag taxonomy across the bundled cherry packs; dropped the `synth-placeholder` marker from the existing three.
 
 ### v0.2.1
 

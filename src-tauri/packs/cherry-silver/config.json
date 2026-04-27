@@ -1,10 +1,10 @@
 {
-  "id": "cherry-blue",
-  "name": "Cherry Blue",
+  "id": "cherry-silver",
+  "name": "Cherry Silver",
   "key_define_type": "single",
   "sound": "sound.ogg",
   "includes_numpad": true,
   "license": "CC0-1.0",
   "author": "BubbleKeys",
-  "tags": ["mechanical", "cherry", "blue", "clicky"]
+  "tags": ["mechanical", "cherry", "silver", "linear", "speed"]
 }

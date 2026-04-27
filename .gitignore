@@ -20,6 +20,9 @@ dist/
 src-tauri/gen/
 src-tauri/WixTools/
 
+# Local-only synth-pack preview output (not bundled)
+out/
+
 # Local secrets
 .env
 .env.local
