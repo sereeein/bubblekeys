@@ -30,3 +30,5 @@ export const completeOnboarding = () => invoke<void>("complete_onboarding");
 export const resetOnboarding    = () => invoke<void>("reset_onboarding");
 export const openAccessibilitySettings = () => invoke<void>("open_accessibility_settings");
 export const checkAccessibility = () => invoke<boolean>("check_accessibility");
+export const openUrl = (url: string) => invoke<void>("open_url", { url });
+export const getAppVersion = () => invoke<string>("get_app_version");

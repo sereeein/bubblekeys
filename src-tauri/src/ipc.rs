@@ -169,6 +169,23 @@ pub fn check_accessibility() -> bool {
 }
 
 #[tauri::command]
+pub fn open_url(url: String) -> Result<(), String> {
+    if !url.starts_with("https://") {
+        return Err("only https URLs allowed".into());
+    }
+    std::process::Command::new("open")
+        .arg(&url)
+        .status()
+        .map_err(|e| e.to_string())?;
+    Ok(())
+}
+
+#[tauri::command]
+pub fn get_app_version() -> &'static str {
+    env!("CARGO_PKG_VERSION")
+}
+
+#[tauri::command]
 pub async fn import_pack(
     archive_path: String,
     store: State<'_, Arc<RwLock<PackStore>>>,

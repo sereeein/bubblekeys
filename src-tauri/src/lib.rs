@@ -48,6 +48,8 @@ pub fn run() {
             ipc::reset_onboarding,
             ipc::open_accessibility_settings,
             ipc::check_accessibility,
+            ipc::open_url,
+            ipc::get_app_version,
             ipc::import_pack,
         ])
         .setup(|app| {
