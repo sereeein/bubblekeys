@@ -3,6 +3,7 @@ pub mod dispatcher;
 pub mod ipc;
 pub mod key_listener;
 pub mod mute_controller;
+pub mod night_silent;
 pub mod pack_format;
 pub mod pack_store;
 pub mod settings_store;
@@ -138,11 +139,13 @@ pub fn run() {
                 });
             }
 
+            let mute_for_night = mute.clone();
             app.manage(mute);
             app.manage(store);
             app.manage(active_pack);
             app.manage(volume);
             let settings_arc = Arc::new(RwLock::new(settings));
+            night_silent::spawn(settings_arc.clone(), mute_for_night);
             app.manage(settings_arc);
             let engine_for_state: Arc<dyn AudioEngine> = engine.clone();
             app.manage(engine_for_state);
