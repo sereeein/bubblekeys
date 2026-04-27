@@ -1,6 +1,6 @@
 //! Loads sound packs from a directory into RAM and exposes them to the dispatcher.
 
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::path::Path;
 use std::sync::Arc;
 
@@ -25,23 +25,30 @@ pub enum PackSamples {
 pub struct LoadedPack {
     pub manifest: PackManifest,
     pub samples: PackSamples,
+    pub dir_name: String,
 }
 
 #[derive(Default)]
 pub struct PackStore {
     packs: HashMap<String, LoadedPack>,
+    bundled_ids: HashSet<String>,
 }
 
 impl PackStore {
     pub fn new() -> Self { Self::default() }
 
     pub fn load_dir(&mut self, dir: &Path) -> Result<(), PackError> {
+        // Clear existing packs so on-disk deletions propagate when load_dir is
+        // called again (e.g. after delete_pack or import_pack). bundled_ids is
+        // intentionally NOT cleared — bundled status persists across reloads.
+        self.packs.clear();
         for entry in std::fs::read_dir(dir)? {
             let entry = entry?;
             if !entry.path().is_dir() { continue; }
             let manifest = load_manifest(&entry.path())?;
             let samples = decode_pack_samples(&entry.path(), &manifest)?;
-            self.packs.insert(manifest.id.clone(), LoadedPack { manifest, samples });
+            let dir_name = entry.file_name().to_string_lossy().to_string();
+            self.packs.insert(manifest.id.clone(), LoadedPack { manifest, samples, dir_name });
         }
         Ok(())
     }
@@ -53,6 +60,12 @@ impl PackStore {
     }
 
     pub fn get(&self, id: &str) -> Option<&LoadedPack> { self.packs.get(id) }
+
+    pub fn mark_bundled(&mut self, ids: &[String]) {
+        self.bundled_ids = ids.iter().cloned().collect();
+    }
+
+    pub fn is_bundled(&self, id: &str) -> bool { self.bundled_ids.contains(id) }
 }
 
 fn decode_pack_samples(dir: &Path, m: &PackManifest) -> Result<PackSamples, PackError> {
@@ -88,22 +101,34 @@ fn decode_multi(dir: &Path, m: &PackManifest) -> Result<PackSamples, PackError> 
     Ok(PackSamples::MultiPcm { rate, channels, slices })
 }
 
-/// On first launch, copies bundled packs from the app resource dir to the user pack dir.
-/// Subsequent launches no-op.
+/// On first launch, copies bundled packs from the app resource dir to the user pack dir
+/// and returns the list of bundled pack ids that were installed (so the caller can
+/// mark them as protected from deletion). Subsequent launches no-op and return [].
 pub fn install_default_packs(
     bundled_resource_dir: &Path,
     user_pack_dir: &Path,
-) -> std::io::Result<()> {
+) -> std::io::Result<Vec<String>> {
     if user_pack_dir.exists() && std::fs::read_dir(user_pack_dir)?.next().is_some() {
-        return Ok(());
+        return Ok(vec![]);
     }
     std::fs::create_dir_all(user_pack_dir)?;
     let src = bundled_resource_dir.join("packs");
     if !src.exists() {
         log::warn!("bundled packs dir missing: {}", src.display());
-        return Ok(());
+        return Ok(vec![]);
     }
-    copy_dir_recursive(&src, user_pack_dir)
+    copy_dir_recursive(&src, user_pack_dir)?;
+
+    // Scan the freshly-populated user_pack_dir and collect manifest ids.
+    let mut ids = Vec::new();
+    for entry in std::fs::read_dir(user_pack_dir)? {
+        let entry = entry?;
+        if !entry.path().is_dir() { continue; }
+        if let Ok(manifest) = load_manifest(&entry.path()) {
+            ids.push(manifest.id);
+        }
+    }
+    Ok(ids)
 }
 
 pub fn copy_dir_recursive(src: &Path, dst: &Path) -> std::io::Result<()> {
@@ -155,5 +180,40 @@ mod tests {
         } else {
             panic!("expected multi");
         }
+    }
+
+    #[test]
+    fn dir_name_persisted_on_load() {
+        let dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures");
+        let mut store = PackStore::new();
+        store.load_dir(&dir).unwrap();
+        let p = store.get("test-single").unwrap();
+        assert_eq!(p.dir_name, "pack_single");
+    }
+
+    #[test]
+    fn mark_bundled_works() {
+        let mut store = PackStore::new();
+        let dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures");
+        store.load_dir(&dir).unwrap();
+        assert!(!store.is_bundled("test-single"));
+        store.mark_bundled(&["test-single".to_string()]);
+        assert!(store.is_bundled("test-single"));
+        assert!(!store.is_bundled("test-multi"));
+    }
+
+    #[test]
+    fn load_dir_clears_previous_packs() {
+        use tempfile::tempdir;
+        let mut store = PackStore::new();
+        let fixtures = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures");
+        store.load_dir(&fixtures).unwrap();
+        let initial_count = store.ids().len();
+        assert!(initial_count > 0);
+
+        // Reload from an empty temp dir → packs should be cleared.
+        let empty = tempdir().unwrap();
+        store.load_dir(empty.path()).unwrap();
+        assert_eq!(store.ids().len(), 0);
     }
 }

@@ -64,6 +64,7 @@ mod tests {
         LoadedPack {
             manifest,
             samples: PackSamples::Single(Arc::new(vec![0u8; 4])),
+            dir_name: "test".into(),
         }
     }
 

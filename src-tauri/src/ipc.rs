@@ -13,6 +13,20 @@ use crate::settings_store::{save as save_settings, Settings};
 pub struct PackSummary {
     pub id: String,
     pub name: String,
+    pub bundled: bool,
+}
+
+/// Picks a destination directory under `base` that doesn't yet exist, suffixing
+/// with -2, -3, ... when `stem` collides. Used by import_pack to allow importing
+/// the same archive twice without overwriting the previous import.
+fn unique_dst(base: &std::path::Path, stem: &str) -> std::path::PathBuf {
+    let mut candidate = base.join(stem);
+    let mut suffix = 2;
+    while candidate.exists() {
+        candidate = base.join(format!("{stem}-{suffix}"));
+        suffix += 1;
+    }
+    candidate
 }
 
 #[derive(Serialize)]
@@ -29,6 +43,7 @@ pub fn list_packs(store: State<'_, Arc<RwLock<PackStore>>>) -> Vec<PackSummary> 
         .filter_map(|id| store.get(&id).map(|p| PackSummary {
             id: p.manifest.id.clone(),
             name: p.manifest.name.clone(),
+            bundled: store.is_bundled(&p.manifest.id),
         }))
         .collect()
 }
@@ -198,16 +213,19 @@ pub fn start_drag(window: tauri::Window) -> Result<(), String> {
 #[tauri::command]
 pub async fn import_pack(
     archive_path: String,
+    custom_name: Option<String>,
     store: State<'_, Arc<RwLock<PackStore>>>,
 ) -> Result<String, String> {
     let path = std::path::Path::new(&archive_path);
     let user_pack_dir = crate::user_data_dir().join("packs");
     std::fs::create_dir_all(&user_pack_dir).map_err(|e| e.to_string())?;
 
-    if path.is_dir() {
+    let dst = if path.is_dir() {
         let name = path.file_name().ok_or("invalid path")?;
-        let dst = user_pack_dir.join(name);
+        let stem = name.to_string_lossy();
+        let dst = unique_dst(&user_pack_dir, &stem);
         copy_dir_recursive(path, &dst).map_err(|e| e.to_string())?;
+        dst
     } else if path.extension().map(|e| e == "zip").unwrap_or(false) {
         let file = std::fs::File::open(path).map_err(|e| e.to_string())?;
         let mut archive = zip::ZipArchive::new(file).map_err(|e| e.to_string())?;
@@ -216,7 +234,7 @@ pub async fn import_pack(
             .ok_or("invalid file")?
             .to_string_lossy()
             .to_string();
-        let dst = user_pack_dir.join(stem);
+        let dst = unique_dst(&user_pack_dir, &stem);
         std::fs::create_dir_all(&dst).map_err(|e| e.to_string())?;
 
         // Detect whether all entries share a single top-level directory prefix.
@@ -261,8 +279,44 @@ pub async fn import_pack(
             let mut f = std::fs::File::create(&outpath).map_err(|e| e.to_string())?;
             std::io::copy(&mut entry, &mut f).map_err(|e| e.to_string())?;
         }
+        dst
     } else {
         return Err("unsupported file (need .zip or directory)".into());
+    };
+
+    // Patch the freshly-extracted config.json: rewrite manifest.id when it
+    // collides with an already-loaded pack, and apply custom_name if provided.
+    let cfg_path = dst.join("config.json");
+    let bytes = std::fs::read(&cfg_path).map_err(|e| e.to_string())?;
+    let mut json: serde_json::Value = serde_json::from_slice(&bytes).map_err(|e| e.to_string())?;
+    let original_id = json["id"].as_str().unwrap_or("").to_string();
+
+    let existing_ids: std::collections::HashSet<String> = {
+        let s = store.read().unwrap();
+        s.ids().into_iter().collect()
+    };
+    let mut new_id = original_id.clone();
+    if existing_ids.contains(&original_id) {
+        let mut suffix = 2;
+        loop {
+            let candidate = format!("{original_id}-{suffix}");
+            if !existing_ids.contains(&candidate) { new_id = candidate; break; }
+            suffix += 1;
+        }
+    }
+
+    let mut dirty = false;
+    if new_id != original_id {
+        json["id"] = serde_json::Value::String(new_id.clone());
+        dirty = true;
+    }
+    if let Some(name) = &custom_name {
+        json["name"] = serde_json::Value::String(name.clone());
+        dirty = true;
+    }
+    if dirty {
+        let new_bytes = serde_json::to_vec_pretty(&json).map_err(|e| e.to_string())?;
+        std::fs::write(&cfg_path, new_bytes).map_err(|e| e.to_string())?;
     }
 
     store
@@ -271,4 +325,40 @@ pub async fn import_pack(
         .load_dir(&user_pack_dir)
         .map_err(|e| e.to_string())?;
     Ok("imported".into())
+}
+
+#[tauri::command]
+pub fn delete_pack(
+    id: String,
+    store: State<'_, Arc<RwLock<PackStore>>>,
+    active: State<'_, Arc<RwLock<String>>>,
+    settings: State<'_, Arc<RwLock<Settings>>>,
+) -> Result<(), String> {
+    let dir_name = {
+        let s = store.read().unwrap();
+        let pack = s.get(&id).ok_or_else(|| format!("unknown pack: {id}"))?;
+        if s.is_bundled(&id) { return Err("cannot delete bundled pack".into()); }
+        pack.dir_name.clone()
+    };
+    let user_pack_dir = crate::user_data_dir().join("packs");
+    let target = user_pack_dir.join(&dir_name);
+    std::fs::remove_dir_all(&target).map_err(|e| e.to_string())?;
+    store.write().unwrap().load_dir(&user_pack_dir).map_err(|e| e.to_string())?;
+
+    // If we just deleted the active pack, fall back to the first remaining (bundled) pack.
+    let was_active = { active.read().unwrap().clone() == id };
+    if was_active {
+        let new_active = {
+            let s = store.read().unwrap();
+            s.ids().first().cloned().unwrap_or_default()
+        };
+        *active.write().unwrap() = new_active.clone();
+        let snapshot = {
+            let mut g = settings.write().unwrap();
+            g.active_pack = new_active;
+            g.clone()
+        };
+        save_settings(&snapshot).map_err(|e| e.to_string())?;
+    }
+    Ok(())
 }

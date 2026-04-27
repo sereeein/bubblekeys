@@ -53,17 +53,19 @@ pub fn run() {
             ipc::close_app,
             ipc::start_drag,
             ipc::import_pack,
+            ipc::delete_pack,
         ])
         .setup(|app| {
             let resource_dir = app.path().resource_dir().expect("resource_dir");
             let user_dir = user_data_dir();
             let pack_dir = user_dir.join("packs");
-            install_default_packs(&resource_dir, &pack_dir).ok();
+            let bundled_ids = install_default_packs(&resource_dir, &pack_dir).unwrap_or_default();
 
             let settings = settings_store::load();
 
             let mut store = PackStore::new();
             store.load_dir(&pack_dir).expect("load packs");
+            store.mark_bundled(&bundled_ids);
             log::info!("loaded {} packs from {}", store.ids().len(), pack_dir.display());
 
             log::info!("active pack: {}", settings.active_pack);

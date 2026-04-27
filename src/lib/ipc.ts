@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 
-export interface PackSummary { id: string; name: string }
+export interface PackSummary { id: string; name: string; bundled: boolean }
 export interface AppState { active_pack: string; muted: boolean; volume: number }
 
 export const listPacks      = ()                  => invoke<PackSummary[]>("list_packs");
