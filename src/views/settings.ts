@@ -1,16 +1,18 @@
 import { getSettings, updateSettings, type Settings } from "../lib/ipc";
+import { detectLocale, setLocale, t, type Locale } from "../i18n";
+import { refreshActiveTab } from "../lib/router";
 
 export async function renderSettings(host: HTMLElement) {
   const s = await getSettings();
 
   host.innerHTML = `
     <ul class="settings-list">
-      ${row("HOTKEY", input("hotkey", s.hotkey, "text"))}
-      ${row("AUTOSTART", toggle("auto_start", s.auto_start))}
-      ${row("PITCH VAR", toggle("pitch_jitter", s.pitch_jitter))}
-      ${row("MENU ICON", toggle("menu_icon_visible", s.menu_icon_visible))}
-      ${row("OUTPUT", input("output_device", s.output_device, "text"))}
-      ${row("LANGUAGE", select("language", s.language, [
+      ${row(t("settings.hotkey"), input("hotkey", s.hotkey, "text"))}
+      ${row(t("settings.autostart"), toggle("auto_start", s.auto_start))}
+      ${row(t("settings.pitch_jitter"), toggle("pitch_jitter", s.pitch_jitter))}
+      ${row(t("settings.menu_icon"), toggle("menu_icon_visible", s.menu_icon_visible))}
+      ${row(t("settings.output"), input("output_device", s.output_device, "text"))}
+      ${row(t("settings.language"), select("language", s.language, [
         ["auto", "Auto"], ["en", "English"], ["zh-CN","简体中文"],
         ["zh-TW","繁體中文"], ["ja","日本語"], ["ko","한국어"]
       ]))}
@@ -18,12 +20,17 @@ export async function renderSettings(host: HTMLElement) {
   `;
 
   host.querySelector<HTMLFormElement>(".settings-list")!.addEventListener("change", async (e) => {
-    const t = e.target as HTMLInputElement | HTMLSelectElement;
+    const tgt = e.target as HTMLInputElement | HTMLSelectElement;
     const next: Settings = await getSettings();
-    const key = t.dataset.key as keyof Settings;
-    if (t.type === "checkbox") (next as any)[key] = (t as HTMLInputElement).checked;
-    else (next as any)[key] = t.value;
+    const key = tgt.dataset.key as keyof Settings;
+    if (tgt.type === "checkbox") (next as any)[key] = (tgt as HTMLInputElement).checked;
+    else (next as any)[key] = tgt.value;
     await updateSettings(next);
+    if (key === "language") {
+      const v = tgt.value;
+      setLocale((v === "auto" ? detectLocale() : v) as Locale);
+      await refreshActiveTab();
+    }
   });
 }
 

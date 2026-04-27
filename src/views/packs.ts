@@ -1,4 +1,5 @@
 import { getState, listPacks, setActivePack, previewPack as ipcPreview } from "../lib/ipc";
+import { t } from "../i18n";
 
 export async function renderPacks(host: HTMLElement) {
   const [packs, state] = await Promise.all([listPacks(), getState()]);
@@ -11,7 +12,7 @@ export async function renderPacks(host: HTMLElement) {
           <span>${p.name}</span><span class="meta">${p.id === state.active_pack ? '♪' : ''}</span>
         </li>
       `).join("")}
-      <li class="pack-import" data-action="import">+ IMPORT MECHVIBES</li>
+      <li class="pack-import" data-action="import">${t("packs.import")}</li>
     </ul>`;
 
   host.querySelectorAll<HTMLLIElement>(".pack-row").forEach(li => {

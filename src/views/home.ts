@@ -1,4 +1,5 @@
 import { getState, listPacks, setMuted, setVolume } from "../lib/ipc";
+import { t } from "../i18n";
 
 export async function renderHome(host: HTMLElement) {
   const state = await getState();
@@ -10,12 +11,12 @@ export async function renderHome(host: HTMLElement) {
       <h1 class="pack-name">${active?.name ?? "—"}</h1>
       <div class="art" aria-hidden="true">⌨</div>
       <div class="vol-row">
-        <span>VOL</span>
+        <span>${t("home.volume")}</span>
         <div class="pixel-bar"><div class="fill" id="vol-fill"></div></div>
         <span id="vol-val">${Math.round(state.volume * 100)}</span>
       </div>
       <button class="pixel-btn" id="toggle" aria-pressed="${!state.muted}">
-        ${state.muted ? "▶ OFF" : "▶ ON"}
+        ${state.muted ? t("home.off") : t("home.on")}
       </button>
     </div>`;
 
@@ -35,7 +36,7 @@ export async function renderHome(host: HTMLElement) {
     // aria-pressed=true means "ON button is active" = not muted; clicking → mute
     await setMuted(nowMuted);
     btn.setAttribute("aria-pressed", String(!nowMuted));
-    btn.textContent = nowMuted ? "▶ OFF" : "▶ ON";
+    btn.textContent = nowMuted ? t("home.off") : t("home.on");
     led.classList.toggle("off", nowMuted);
   });
 

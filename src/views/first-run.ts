@@ -1,4 +1,5 @@
 import { completeOnboarding, openAccessibilitySettings, checkAccessibility } from "../lib/ipc";
+import { t } from "../i18n";
 
 type Step = "welcome" | "why" | "grant" | "try";
 
@@ -51,27 +52,27 @@ export function renderFirstRun(host: HTMLElement, onDone: () => void) {
 const welcome = () => `
   <div class="onboard">
     <h1>🫧 BubbleKeys</h1>
-    <p class="subtitle">Welcome / 欢迎</p>
-    <button class="pixel-btn" data-go="why">▶ START</button>
+    <p class="subtitle">${t("onboarding.welcome.title")}</p>
+    <button class="pixel-btn" data-go="why">${t("onboarding.welcome.cta")}</button>
   </div>`;
 
 const why = () => `
   <div class="onboard">
-    <h2>NEEDS ACCESSIBILITY</h2>
-    <p>BubbleKeys listens to your keyboard so it can play a sound on every keypress. Nothing is recorded, logged, or sent.</p>
-    <button class="pixel-btn" data-go="open-system">⚙ OPEN SYSTEM SETTINGS</button>
+    <h2>${t("onboarding.why.title")}</h2>
+    <p>${t("onboarding.why.body")}</p>
+    <button class="pixel-btn" data-go="open-system">${t("onboarding.why.cta")}</button>
   </div>`;
 
 const grant = () => `
   <div class="onboard">
-    <h2>↑ ENABLE BUBBLEKEYS</h2>
-    <p>System Settings → Privacy & Security → Accessibility → toggle BubbleKeys on. We'll auto-advance once granted.</p>
-    <p class="subtitle"><span id="accessibility-status">⌛ waiting…</span></p>
+    <h2>${t("onboarding.grant.title")}</h2>
+    <p>${t("onboarding.grant.body")}</p>
+    <p class="subtitle"><span id="accessibility-status">${t("onboarding.grant.waiting")}</span></p>
   </div>`;
 
 const tryIt = () => `
   <div class="onboard">
-    <h2>✓ READY</h2>
-    <p>Press any key to test. Then click DONE.</p>
-    <button class="pixel-btn" data-go="done">DONE</button>
+    <h2>${t("onboarding.try.title")}</h2>
+    <p>${t("onboarding.try.body")}</p>
+    <button class="pixel-btn" data-go="done">${t("onboarding.try.cta")}</button>
   </div>`;

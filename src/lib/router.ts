@@ -1,3 +1,5 @@
+import { t as tt } from "../i18n";
+
 export type TabId = "home" | "packs" | "settings" | "about";
 
 const tabs: TabId[] = ["home", "packs", "settings", "about"];
@@ -6,7 +8,12 @@ export interface RouterApi {
   activate(tab: TabId): Promise<void>;
   next(): Promise<void>;
   prev(): Promise<void>;
+  refresh(): Promise<void>;
 }
+
+let _refresh: () => Promise<void> = async () => {};
+export function setRouterRefresh(fn: () => Promise<void>) { _refresh = fn; }
+export async function refreshActiveTab() { await _refresh(); }
 
 export function createRouter(
   hostScreen: HTMLElement,
@@ -17,7 +24,7 @@ export function createRouter(
 
   function paintTabs() {
     hostTabs.innerHTML = tabs.map(t => `
-      <button class="tab ${t === active ? 'active' : ''}" data-tab="${t}">${t.toUpperCase()}</button>
+      <button class="tab ${t === active ? 'active' : ''}" data-tab="${t}">${tt(`tab.${t}`)}</button>
     `).join("");
     hostTabs.querySelectorAll<HTMLButtonElement>(".tab").forEach(b => {
       b.addEventListener("click", () => activate(b.dataset.tab as TabId));
@@ -48,5 +55,9 @@ export function createRouter(
     await activate(tabs[(i - 1 + tabs.length) % tabs.length]);
   }
 
-  return { activate, next, prev };
+  async function refresh() {
+    await activate(active);
+  }
+
+  return { activate, next, prev, refresh };
 }
