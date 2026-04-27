@@ -37,6 +37,24 @@ npm install
 npm run tauri dev
 ```
 
+## Sound packs
+
+BubbleKeys ships with 4 default packs (cherry-blue, cherry-red, cherry-brown, bubbles). Import additional packs via **PACKS → + IMPORT MECHVIBES** — the importer accepts any [Mechvibes](https://mechvibes.com/sound-packs/)-format `.zip` (or unpacked directory). You can rename a pack on import and delete imported packs anytime; the bundled defaults are protected.
+
+## Changelog
+
+### v0.2.0
+
+- **Pack management**: imported packs can be deleted from the list (× button). Bundled defaults are protected.
+- **Multi-import**: importing the same pack twice no longer overwrites — duplicates are auto-suffixed.
+- **Custom names on import**: name the pack however you like before it lands in the list.
+- **Pack list pagination**: lists with more than 8 packs paginate with ◀/▶ buttons or plain ←/→ keys.
+- **Settings layout**: night-silent start/end merged into a single row; layout tightened to fit 480 px window without scrolling.
+
+### v0.1.x
+
+Initial release line. Audio + drag + close-button + ad-hoc signing fixes; multi-language UI; Accessibility auto-detect.
+
 ## License
 
 MIT — see [LICENSE](./LICENSE).
