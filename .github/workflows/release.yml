@@ -41,15 +41,13 @@ jobs:
       - name: Install npm dependencies
         run: npm ci
 
-      - name: Build universal .dmg
-        env:
-          # Tauri auto-detects these; absent = unsigned build (still produces a .dmg)
-          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
-          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
-          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
-          APPLE_ID: ${{ secrets.APPLE_ID }}
-          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      # Apple signing/notarization env vars deliberately omitted until
+      # APPLE_CERTIFICATE (etc.) secrets are configured. GitHub Actions
+      # renders missing secrets as empty strings (not unset), and Tauri 2
+      # interprets `APPLE_CERTIFICATE=""` as "try to sign" rather than
+      # "skip signing", causing `security import` to fail on the empty
+      # blob. Re-add the env block once real secrets exist.
+      - name: Build universal .dmg (unsigned)
         run: npm run tauri -- build --target universal-apple-darwin
 
       - name: Compute SHA256 sums
