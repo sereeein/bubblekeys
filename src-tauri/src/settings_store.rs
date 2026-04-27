@@ -16,6 +16,7 @@ pub struct Settings {
     #[serde(default = "default_lang")] pub language: String,
     #[serde(default = "default_output")] pub output_device: String,
     #[serde(default)] pub night_silent: NightSilent,
+    #[serde(default)] pub onboarding_completed: bool,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Default)]

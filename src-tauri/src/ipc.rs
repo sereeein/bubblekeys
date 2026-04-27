@@ -127,3 +127,17 @@ pub fn update_settings(
     mute.set_user_muted(new_settings.muted);
     Ok(())
 }
+
+#[tauri::command]
+pub fn complete_onboarding(s: State<'_, Arc<RwLock<Settings>>>) -> Result<(), String> {
+    let mut g = s.write().unwrap();
+    g.onboarding_completed = true;
+    save_settings(&g).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+pub fn reset_onboarding(s: State<'_, Arc<RwLock<Settings>>>) -> Result<(), String> {
+    let mut g = s.write().unwrap();
+    g.onboarding_completed = false;
+    save_settings(&g).map_err(|e| e.to_string())
+}
